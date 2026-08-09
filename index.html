@@ -636,6 +636,28 @@ gap: 8px;
 
 }
 
+  /* THUNDER LOGO */
+
+.hero-logo {
+position: absolute;
+right: 30px;
+top: 50%;
+transform: translateY(-50%);
+width: min(32vw, 330px);
+height: auto;
+opacity: 0.95;
+filter: drop-shadow(0 0 25px rgba(34, 211, 223, 0.18));
+}
+
+@media (max-width: 620px) {
+.hero-logo {
+width: 150px;
+right: -25px;
+opacity: 0.22;
+}
+}
+
+
 </style>
 </head>
 
@@ -656,6 +678,8 @@ gap: 8px;
 
 <header class="hero">
 <div class="container hero-inner">
+
+<img src="thunder-logo.png" alt="MK Thunder logo" class="hero-logo">
 
 <div class="eyebrow">Milton Keynes Thunder</div>
 
