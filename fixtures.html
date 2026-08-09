@@ -368,7 +368,51 @@ const games = XLSX.utils.sheet_to_json(gamesSheet, {
 range: 2,
 defval: ""
 });
+function readExcelDate(value) {
 
+if (value instanceof Date) {
+return value;
+}
+
+if (typeof value === "number") {
+const parsed = XLSX.SSF.parse_date_code(value);
+
+return new Date(
+parsed.y,
+parsed.m - 1,
+parsed.d
+);
+}
+
+const text = String(value).trim();
+
+const match = text.match(
+/^(\d{1,2})-([A-Za-z]{3})-(\d{2,4})$/
+);
+
+if (match) {
+
+const months = {
+Jan: 0, Feb: 1, Mar: 2, Apr: 3,
+May: 4, Jun: 5, Jul: 6, Aug: 7,
+Sep: 8, Oct: 9, Nov: 10, Dec: 11
+};
+
+let year = Number(match[3]);
+
+if (year < 100) {
+year += 2000;
+}
+
+return new Date(
+year,
+months[match[2]],
+Number(match[1])
+);
+}
+
+return new Date(text);
+}
 const fixtureList =
 document.getElementById("fixture-list");
 
@@ -385,7 +429,7 @@ const upcomingGames = games
 String(game["Status"]).trim().toLowerCase() === "upcoming"
 )
 .sort((a, b) =>
-new Date(a["Date"]) - new Date(b["Date"])
+readExcelDate(a["Date"]) - readExcelDate(b["Date"])
 );
 
 if (upcomingGames.length === 0) {
@@ -414,21 +458,7 @@ return;
 }
 
 // DATE
-let rawDate = game["Date"];
-let date;
-
-if (rawDate instanceof Date) {
-date = rawDate;
-} else if (typeof rawDate === "number") {
-const parsed = XLSX.SSF.parse_date_code(rawDate);
-date = new Date(
-parsed.y,
-parsed.m - 1,
-parsed.d
-);
-} else {
-date = new Date(rawDate);
-}
+const date = readExcelDate(game["Date"]);
 const formattedDate =
 date.toLocaleDateString("en-GB", {
 weekday: "long",
