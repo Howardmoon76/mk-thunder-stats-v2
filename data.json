@@ -15,6 +15,14 @@
 "logo": "dragons.png",
 "rink": "Deeside Ice Arena",
 "city": "Deeside"
+},
+  {
+  "id": "T003",
+"name": "Romford Buccaneers",
+"shortName": "Buccaneers",
+"logo": "romford.png",
+"rink": "Sapphire Ice and Leisure Centre",
+"city": "Romford"
 }
 ],
 
@@ -31,6 +39,20 @@
 "result": null,
 "otSo": null,
 "venue": "Deeside Ice Arena",
+"status": "Upcoming"
+},
+  {
+"id": "G002",
+"date": "2026-09-05",
+"faceoff": "18:15",
+"opponentId": "T003",
+"homeAway": "A",
+"competition": "Pre-season",
+"thunderScore": null,
+"opponentScore": null,
+"result": null,
+"otSo": null,
+"venue": "Sapphire Ice and Leisure Centre",
 "status": "Upcoming"
 }
 ]
