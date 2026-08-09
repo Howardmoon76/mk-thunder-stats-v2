@@ -1,0 +1,37 @@
+{
+"teams": [
+{
+"id": "T001",
+"name": "Milton Keynes Thunder",
+"shortName": "MK Thunder",
+"logo": "thunder-logo.png",
+"rink": "Planet Ice Milton Keynes",
+"city": "Milton Keynes"
+},
+{
+"id": "T002",
+"name": "Deeside Dragons",
+"shortName": "Deeside",
+"logo": "dragons.png",
+"rink": "Deeside Ice Arena",
+"city": "Deeside"
+}
+],
+
+"games": [
+{
+"id": "G001",
+"date": "2026-08-30",
+"faceoff": "17:15",
+"opponentId": "T002",
+"homeAway": "A",
+"competition": "Pre-season",
+"thunderScore": null,
+"opponentScore": null,
+"result": null,
+"otSo": null,
+"venue": "Deeside Ice Arena",
+"status": "Upcoming"
+}
+]
+}
