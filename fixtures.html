@@ -335,43 +335,65 @@ MK Thunder Stats Centre · Independent fan statistics site · 2026/27
 
 </footer>
 
-
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
+fetch("MK_Thunder_Stats_Master.xlsx")
+.then(response => {
+if (!response.ok) {
+throw new Error("Excel workbook could not be loaded");
+}
+return response.arrayBuffer();
+})
+.then(arrayBuffer => {
 
-fetch("data.json")
-.then(response => response.json())
-.then(data => {
+const workbook = XLSX.read(arrayBuffer, {
+type: "array",
+cellDates: true
+});
+
+const teamsSheet = workbook.Sheets["Teams"];
+const gamesSheet = workbook.Sheets["Games"];
+
+if (!teamsSheet || !gamesSheet) {
+throw new Error("Teams or Games sheet not found");
+}
+
+// Row 3 contains the column headings in your workbook
+const teams = XLSX.utils.sheet_to_json(teamsSheet, {
+range: 2,
+defval: ""
+});
+
+const games = XLSX.utils.sheet_to_json(gamesSheet, {
+range: 2,
+defval: ""
+});
 
 const fixtureList =
 document.getElementById("fixture-list");
 
-const thunder =
-data.teams.find(team => team.id === "T001");
+const thunder = teams.find(team =>
+String(team["Team ID"]).trim() === "T001"
+);
 
-const upcomingGames = data.games
+if (!thunder) {
+throw new Error("MK Thunder T001 not found");
+}
+
+const upcomingGames = games
 .filter(game =>
-game.status.toLowerCase() === "upcoming"
+String(game["Status"]).trim().toLowerCase() === "upcoming"
 )
-.sort((a, b) => {
-
-const dateA =
-new Date(`${a.date}T${a.faceoff}`);
-
-const dateB =
-new Date(`${b.date}T${b.faceoff}`);
-
-return dateA - dateB;
-
-});
+.sort((a, b) =>
+new Date(a["Date"]) - new Date(b["Date"])
+);
 
 if (upcomingGames.length === 0) {
-
 fixtureList.innerHTML = `
 <div class="empty-message">
 No upcoming fixtures currently listed.
 </div>
 `;
-
 return;
 }
 
@@ -379,15 +401,20 @@ fixtureList.innerHTML = "";
 
 upcomingGames.forEach(game => {
 
-const opponent =
-data.teams.find(
-team => team.id === game.opponentId
+const opponentId =
+String(game["Opponent ID"]).trim();
+
+const opponent = teams.find(team =>
+String(team["Team ID"]).trim() === opponentId
 );
 
-if (!opponent || !thunder) return;
+if (!opponent) {
+console.warn("Opponent not found:", opponentId);
+return;
+}
 
-const date =
-new Date(`${game.date}T${game.faceoff}`);
+// DATE
+const date = new Date(game["Date"]);
 
 const formattedDate =
 date.toLocaleDateString("en-GB", {
@@ -397,25 +424,66 @@ month: "long",
 year: "numeric"
 });
 
+// FACE-OFF TIME
+let faceoff = game["Face-off"];
+
+if (faceoff instanceof Date) {
+
+faceoff = faceoff.toLocaleTimeString("en-GB", {
+hour: "2-digit",
+minute: "2-digit"
+});
+
+} else if (typeof faceoff === "number") {
+
+const totalMinutes =
+Math.round(faceoff * 24 * 60);
+
+const hours =
+Math.floor(totalMinutes / 60) % 24;
+
+const minutes =
+totalMinutes % 60;
+
+faceoff =
+String(hours).padStart(2, "0") +
+":" +
+String(minutes).padStart(2, "0");
+
+} else {
+faceoff = String(faceoff);
+}
+
+// HOME / AWAY
 const home =
-game.homeAway.toUpperCase() === "H";
+String(game["H/A"]).trim().toUpperCase() === "H";
+
+const thunderTeam = {
+name: thunder["Team Name"],
+logo: thunder["Logo file"]
+};
+
+const opponentTeam = {
+name: opponent["Team Name"],
+logo: opponent["Logo file"]
+};
 
 const leftTeam =
-home ? thunder : opponent;
+home ? thunderTeam : opponentTeam;
 
 const rightTeam =
-home ? opponent : thunder;
+home ? opponentTeam : thunderTeam;
 
 const locationText =
 home ? "HOME" : "AWAY";
 
+// BUILD FIXTURE CARD
 const card =
 document.createElement("div");
 
 card.className = "fixture-card";
 
 card.innerHTML = `
-
 <div class="fixture-top">
 
 <div class="fixture-date">
@@ -423,11 +491,10 @@ ${formattedDate}
 </div>
 
 <div class="competition">
-${game.competition}
+${game["Competition"]}
 </div>
 
 </div>
-
 
 <div class="fixture-matchup">
 
@@ -442,11 +509,9 @@ ${leftTeam.name}
 </div>
 </div>
 
-
 <div class="vs">
 VS
 </div>
-
 
 <div>
 <img
@@ -461,12 +526,12 @@ ${rightTeam.name}
 
 </div>
 
-
 <div class="fixture-details">
 
-Face-off: <strong>${game.faceoff}</strong><br>
+Face-off:
+<strong>${faceoff}</strong><br>
 
-${game.venue}
+${game["Venue"]}
 
 <br>
 
@@ -475,27 +540,26 @@ ${locationText}
 </span>
 
 </div>
-
 `;
 
 fixtureList.appendChild(card);
-
 });
 
 })
-
 .catch(error => {
 
-console.error(error);
+console.error(
+"Could not read Excel workbook:",
+error
+);
 
 document.getElementById("fixture-list").innerHTML = `
 <div class="empty-message">
-Fixtures could not be loaded.
+Fixtures could not be loaded from Excel.
 </div>
 `;
 
 });
-
 </script>
 
 
