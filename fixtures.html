@@ -458,7 +458,7 @@ return;
 }
 
 // DATE
- console.log("GAME COLUMNS:", Object.keys(game));
+console.log("DATE VALUE:", game["Date"], "TYPE:", typeof game["Date"]);
 const date = readExcelDate(game["Date"]);
 const formattedDate =
 date.toLocaleDateString("en-GB", {
