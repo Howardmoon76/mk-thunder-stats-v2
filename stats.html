@@ -286,9 +286,9 @@ cellDates: true
 
 const playersSheet = workbook.Sheets["Players"];
 const statsSheet = workbook.Sheets["Player Game Stats"];
-
+const netmindersheet = workbook.sheets["Netminder Stats"];
 if (!playersSheet || !statsSheet) {
-throw new Error("Players or Player Game Stats sheet not found");
+throw new Error("Players, Player Game Stats or Netminder Stats sheet not found");
 }
 
 let players = XLSX.utils.sheet_to_json(playersSheet, {
@@ -297,6 +297,11 @@ defval: ""
 });
 
 let gameStats = XLSX.utils.sheet_to_json(statsSheet, {
+range: 2,
+defval: ""
+});
+
+  let netminderStats = XLSX.utils.sheet_to_json(netminderSheet, {
 range: 2,
 defval: ""
 });
@@ -319,7 +324,7 @@ return clean;
 
 players = cleanRows(players);
 gameStats = cleanRows(gameStats);
-
+netmiderStats = cleanRows(netminderStats);
 const playerMap = {};
 
 players.forEach(player => {
@@ -386,6 +391,112 @@ playerMap[playerId].plusMinus += plusMinus;
 
 });
 
+  const netminderMap = {};
+
+players.forEach(player => {
+
+const id = String(player["Player ID"]).trim();
+
+if (!id) {
+return;
+}
+
+if (String(player["Position"]).trim().toLowerCase() !== "netminder") {
+return;
+}
+
+netminderMap[id] = {
+id: id,
+name: String(player["Name"]).trim(),
+number: String(player["Number"]).trim(),
+gp: 0,
+minutes: 0,
+shotsAgainst: 0,
+goalsAgainst: 0,
+saves: 0,
+shutouts: 0,
+wins: 0,
+losses: 0
+};
+
+});
+
+  netminderStats.forEach(row => {
+
+const playerId =
+String(row["Player ID"]).trim();
+
+if (!playerId || !netminderMap[playerId]) {
+return;
+}
+
+const minutes =
+Number(row["Minutes"]) || 0;
+
+const shotsAgainst =
+Number(row["Shots Against"]) || 0;
+
+const goalsAgainst =
+Number(row["Goals Against"]) || 0;
+
+const saves =
+Number(row["Saves"]) || 0;
+
+const shutout =
+String(row["Shutout?"])
+.trim()
+.toLowerCase();
+
+const decision =
+String(row["Decision"])
+.trim()
+.toUpperCase();
+
+netminderMap[playerId].gp += 1;
+netminderMap[playerId].minutes += minutes;
+netminderMap[playerId].shotsAgainst += shotsAgainst;
+netminderMap[playerId].goalsAgainst += goalsAgainst;
+netminderMap[playerId].saves += saves;
+
+if (shutout === "yes") {
+netminderMap[playerId].shutouts += 1;
+}
+
+if (decision === "W") {
+netminderMap[playerId].wins += 1;
+}
+
+if (decision === "L") {
+netminderMap[playerId].losses += 1;
+}
+
+});
+
+  let netminders = Object.values(netminderMap);
+
+netminders.forEach(netminder => {
+
+netminder.savePct =
+netminder.shotsAgainst > 0
+? (netminder.saves / netminder.shotsAgainst) * 100
+: 0;
+
+});
+
+netminders.sort((a, b) => {
+
+if (b.savePct !== a.savePct) {
+return b.savePct - a.savePct;
+}
+
+if (b.saves !== a.saves) {
+return b.saves - a.saves;
+}
+
+return a.name.localeCompare(b.name);
+
+});
+  
 let skaters =
 Object.values(playerMap)
 .filter(player =>
@@ -444,7 +555,30 @@ rowsHTML += `
 `;
 
 });
+let netminderRowsHTML = "";
 
+netminders.forEach(netminder => {
+
+const savePctText =
+netminder.savePct.toFixed(1) + "%";
+
+netminderRowsHTML += `
+<tr>
+<td class="number">${netminder.number}</td>
+<td class="player">${netminder.name}</td>
+<td>${netminder.gp}</td>
+<td>${netminder.minutes}</td>
+<td>${netminder.shotsAgainst}</td>
+<td>${netminder.goalsAgainst}</td>
+<td>${netminder.saves}</td>
+<td class="points">${savePctText}</td>
+<td>${netminder.shutouts}</td>
+<td>${netminder.wins}</td>
+<td>${netminder.losses}</td>
+</tr>
+`;
+
+});
 statsArea.innerHTML = `
 
 <div class="stats-wrap">
@@ -471,6 +605,42 @@ ${rowsHTML}
 </table>
 
 </div>
+
+mark ward <markward76@gmail.com>
+17:02 (0 minutes ago)
+to me
+
+<div class="section-heading" style="margin-top:45px;">
+<h1>Netminder Stats</h1>
+<div class="season">2026/27 Season</div>
+</div>
+
+<div class="stats-wrap">
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Netminder</th>
+<th>GP</th>
+<th>MIN</th>
+<th>SA</th>
+<th>GA</th>
+<th>SV</th>
+<th>SV%</th>
+<th>SO</th>
+<th>W</th>
+<th>L</th>
+</tr>
+</thead>
+
+<tbody>
+${netminderRowsHTML}
+</tbody>
+</table>
+
+</div>
+
 
 `;
 
