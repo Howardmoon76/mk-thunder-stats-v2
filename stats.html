@@ -286,8 +286,8 @@ cellDates: true
 
 const playersSheet = workbook.Sheets["Players"];
 const statsSheet = workbook.Sheets["Player Game Stats"];
-const netmindersheet = workbook.sheets["Netminder Stats"];
-if (!playersSheet || !statsSheet) {
+const netminderSheet = workbook.Sheets["Netminder Stats"];
+if (!playersSheet || !statsSheet || !netminderSheet) {
 throw new Error("Players, Player Game Stats or Netminder Stats sheet not found");
 }
 
@@ -324,7 +324,7 @@ return clean;
 
 players = cleanRows(players);
 gameStats = cleanRows(gameStats);
-netmiderStats = cleanRows(netminderStats);
+netminderStats = cleanRows(netminderStats);
 const playerMap = {};
 
 players.forEach(player => {
