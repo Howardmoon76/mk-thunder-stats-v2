@@ -25,7 +25,7 @@ min-height: 100vh;
 /* HEADER */
 
 header {
-padding: 34px 20px 22px;
+padding: 42px 20px 34px;
 border-bottom: 1px solid rgba(49, 220, 198, 0.25);
 }
 
@@ -34,10 +34,17 @@ width: min(1200px, 92%);
 margin: auto;
 }
 
+.header-content {
+display: flex;
+justify-content: space-between;
+align-items: center;
+gap: 30px;
+}
+
 .site-title {
-font-size: clamp(34px, 6vw, 64px);
+font-size: clamp(40px, 7vw, 72px);
 font-weight: 900;
-letter-spacing: 2px;
+font-style: italic;
 margin: 0;
 text-transform: uppercase;
 }
@@ -49,6 +56,12 @@ font-weight: 800;
 letter-spacing: 6px;
 margin-top: 8px;
 text-transform: uppercase;
+}
+
+.header-logo {
+width: 170px;
+height: 170px;
+object-fit: contain;
 }
 
 /* NAV */
@@ -297,15 +310,16 @@ font-size: 28px;
 <body>
 
 <header>
-<div class="container">
+<div class="container header-content">
 
-<div class="site-title">
-MK Thunder
+<div>
+<div class="site-title">MK Thunder</div>
+<div class="page-name">Players</div>
 </div>
 
-<div class="page-name">
-Players
-</div>
+<img src="thunder-logo.png"
+alt="MK Thunder logo"
+class="header-logo">
 
 </div>
 </header>
