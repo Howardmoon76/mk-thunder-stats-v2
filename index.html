@@ -1041,14 +1041,6 @@ game["Result"] === "W"
 );
 
 document.getElementById("wins").textContent = wins.length;
-document.getElementById("gamesPlayed").textContent =
-completedGames.length;
-
-const wins = completedGames.filter(game =>
-game["Result"] === "W"
-);
-
-document.getElementById("wins").textContent = wins.length;
 
 const goalsFor = completedGames.reduce((total, game) =>
 total + (Number(game["Thunder Score"]) || 0), 0
