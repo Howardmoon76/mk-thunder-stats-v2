@@ -744,10 +744,9 @@ display: block;
 <div class="stat-label">Goals For</div>
 </div>
 
-<div class="stat-card">
-<div class="stat-number">—</div>
+<div class="stat-number" id="topScorerName">—</div>
 <div class="stat-label">Top Scorer</div>
-<div class="stat-extra">Season not started</div>
+<div class="stat-extra" id="topScorerGoals">No goals yet</div>
 </div>
 
 <div class="stat-card">
@@ -1047,6 +1046,43 @@ total + (Number(game["Thunder Score"]) || 0), 0
 );
 
 document.getElementById("goalsFor").textContent = goalsFor;
+  // Top Scorer from Player Game Stats
+const playerStatsSheet = workbook.Sheets["Player Game Stats"];
+
+const playerStats = XLSX.utils.sheet_to_json(playerStatsSheet, {
+range: 2,
+defval: ""
+});
+
+// Only include competitive games that have been played
+const competitiveGameIds = new Set(
+completedGames.map(game => game["Game ID"])
+);
+
+const goalTotals = {};
+
+playerStats
+.filter(row => competitiveGameIds.has(row["Game ID"]))
+.forEach(row => {
+const playerName = row["Player Name"];
+const goals = Number(row["Goals"]) || 0;
+
+if (playerName) {
+goalTotals[playerName] =
+(goalTotals[playerName] || 0) + goals;
+}
+});
+
+const topScorer = Object.entries(goalTotals)
+.sort((a, b) => b[1] - a[1])[0];
+
+if (topScorer && topScorer[1] > 0) {
+document.getElementById("topScorerName").textContent =
+topScorer[0];
+
+document.getElementById("topScorerGoals").textContent =
+`${topScorer[1]} goals`;
+}
 });
 
 
