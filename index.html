@@ -1014,7 +1014,13 @@ Built by a Thunder fan for Thunder fans.
 fetch("data.json")
 .then(response => response.json())
 .then(data => {
+// Games Played - competitive games only
+const completedGames = data.games.filter(game =>
+game.result &&
+game.competition !== "Pre-season"
+);
 
+document.getElementById("gamesPlayed").textContent = completedGames.length;
 const upcomingGames = data.games
 .filter(game => game.status === "Upcoming")
 .sort((a, b) => {
