@@ -1017,7 +1017,7 @@ fetch("data.json")
 // Games Played - competitive games only
 const completedGames = data.games.filter(game =>
 game.result &&
-game.Competition !== "Pre-season"
+game.competition !== "Pre-season"
 );
 
 document.getElementById("gamesPlayed").textContent = completedGames.length;
