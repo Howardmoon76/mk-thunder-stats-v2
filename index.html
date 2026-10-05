@@ -1085,7 +1085,7 @@ document.getElementById("topScorerGoals").textContent =
 `${topScorer[1]} goals`;
 }
   const shutouts = completedGames.filter(game =>
-Number(game["Opposition Score"]) === 0
+Number(game["Opponent Score"]) === 0
 );
 
 document.getElementById("shutouts").textContent = shutouts.length;
