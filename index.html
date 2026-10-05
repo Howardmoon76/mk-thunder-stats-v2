@@ -1010,17 +1010,37 @@ Built by a Thunder fan for Thunder fans.
 
 </footer>
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
 <script>
+
+// Games Played from Excel
+fetch("MK_Thunder_Stats_Master.xlsx")
+.then(response => response.arrayBuffer())
+.then(arrayBuffer => {
+const workbook = XLSX.read(arrayBuffer, {
+type: "array",
+cellDates: true
+});
+
+const sheet = workbook.Sheets["Games"];
+const games = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+
+const completedGames = games.filter(game =>
+game["Result"] !== "" &&
+game["Competition"] !== "Pre-season"
+);
+
+document.getElementById("gamesPlayed").textContent =
+completedGames.length;
+});
+
+
+// EXISTING CODE BELOW THIS
 fetch("data.json")
 .then(response => response.json())
 .then(data => {
-// Games Played - competitive games only
-const completedGames = data.games.filter(game =>
-game.result &&
-game.competition !== "Pre-season"
-);
 
-document.getElementById("gamesPlayed").textContent = completedGames.length;
 const upcomingGames = data.games
 .filter(game => game.status === "Upcoming")
 .sort((a, b) => {
