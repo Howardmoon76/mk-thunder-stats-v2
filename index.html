@@ -740,7 +740,7 @@ display: block;
 </div>
 
 <div class="stat-card">
-<div class="stat-number">0</div>
+<div class="stat-number" id="goalsFor">0</div>
 <div class="stat-label">Goals For</div>
 </div>
 
@@ -1041,7 +1041,20 @@ game["Result"] === "W"
 );
 
 document.getElementById("wins").textContent = wins.length;
+document.getElementById("gamesPlayed").textContent =
+completedGames.length;
 
+const wins = completedGames.filter(game =>
+game["Result"] === "W"
+);
+
+document.getElementById("wins").textContent = wins.length;
+
+const goalsFor = completedGames.reduce((total, game) =>
+total + (Number(game["Thunder Score"]) || 0), 0
+);
+
+document.getElementById("goalsFor").textContent = goalsFor;
 });
 
 
