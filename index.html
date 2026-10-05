@@ -735,7 +735,7 @@ display: block;
 </div>
 
 <div class="stat-card">
-<div class="stat-number">0</div>
+<div class="stat-number" id="wins">0</div>
 <div class="stat-label">Wins</div>
 </div>
 
@@ -1036,6 +1036,12 @@ game["Competition"] !== "Pre-season"
 
 document.getElementById("gamesPlayed").textContent =
 completedGames.length;
+  const wins = completedGames.filter(game =>
+game["Result"] === "W"
+);
+
+document.getElementById("wins").textContent = wins.length;
+
 });
 
 
