@@ -751,7 +751,7 @@ display: block;
 </div>
 
 <div class="stat-card">
-<div class="stat-number">0</div>
+<div class="stat-number" id="shutouts">0</div>
 <div class="stat-label">Shutouts</div>
 </div>
 
@@ -1084,6 +1084,11 @@ topScorer[0];
 document.getElementById("topScorerGoals").textContent =
 `${topScorer[1]} goals`;
 }
+  const shutouts = completedGames.filter(game =>
+Number(game["Opposition Score"]) === 0
+);
+
+document.getElementById("shutouts").textContent = shutouts.length;
 });
 
 
