@@ -1105,25 +1105,40 @@ latestInfo.textContent =
 `${latestGame["Competition"]} • ${latestGame["Venue"]}`;
 }
 
+// Get opponent from Excel Teams sheet
+const teamsSheet = workbook.Sheets["Teams"];
 
-fetch("data.json")
-.then(response => response.json())
-.then(data => {
+const teams = XLSX.utils.sheet_to_json(teamsSheet, {
+range: 2,
+defval: ""
+});
 
 const opponentId = String(latestGame["Opponent ID"]).trim();
 
-const opponent = data.teams.find(
-team => String(team.id).trim() === opponentId
+const opponent = teams.find(team =>
+String(team["Team ID"]).trim() === opponentId
 );
 
 if (opponent) {
 document.getElementById("latestOpponentName").textContent =
-opponent.name;
+opponent["Team Name"];
+
+const shortName = String(
+opponent["Short name"] || opponent["Team Name"]
+);
+
+const initials = shortName
+.split(" ")
+.map(word => word.charAt(0))
+.join("")
+.substring(0, 2)
+.toUpperCase();
 
 document.getElementById("latestOpponentBadge").textContent =
-opponent.name.substring(0, 2).toUpperCase();
+initials;
 }
-});
+
+
 }
 
 });
