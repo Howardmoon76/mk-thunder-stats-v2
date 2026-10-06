@@ -776,16 +776,16 @@ display: block;
 <div class="team-name">MK Thunder</div>
 </div>
 
-<div class="score">—</div>
+<div class="score" id="latestScore">-</div>
 
 <div>
-<div class="team-placeholder">?</div>
-<div class="team-name">Opponent</div>
+<div class="team-placeholder" id="latestOpponentBadge">?</div>
+<div class="team-name" id="latestOpponentName">Opponet</div>
 </div>
 
 </div>
 
-<div class="match-info">
+<div class="match-info" id="laestInfo">
 Season has not started yet.
 </div>
 
@@ -1089,6 +1089,36 @@ Number(game["Opponent Score"]) === 0
 );
 
 document.getElementById("shutouts").textContent = shutouts.length;
+  // Latest Result
+const latestGame = [...completedGames]
+.sort((a, b) => new Date(b["Date"]) - new Date(a["Date"]))[0];
+
+if (latestGame) {
+
+document.getElementById("latestScore").textContent =
+`${latestGame["Thunder Score"]} - ${latestGame["Opponent Score"]}`;
+
+document.getElementById("latestInfo").textContent =
+`${latestGame["Competition"]} • ${latestGame["Venue"]}`;
+
+fetch("data.json")
+.then(response => response.json())
+.then(data => {
+
+const opponent = data.teams.find(
+team => team.id === latestGame["Opponent ID"]
+);
+
+if (opponent) {
+document.getElementById("latestOpponentName").textContent =
+opponent.name;
+
+document.getElementById("latestOpponentBadge").textContent =
+opponent.name.substring(0, 2).toUpperCase();
+}
+});
+}
+
 });
 
 
