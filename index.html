@@ -1110,8 +1110,10 @@ fetch("data.json")
 .then(response => response.json())
 .then(data => {
 
+const opponentId = String(latestGame["Opponent ID"]).trim();
+
 const opponent = data.teams.find(
-team => team.id === latestGame["Opponent ID"]
+team => String(team.id).trim() === opponentId
 );
 
 if (opponent) {
