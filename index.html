@@ -772,14 +772,19 @@ display: block;
 <div class="match">
 
 <div>
-<div class="team-placeholder">MK</div>
+<img class="next-team-logo"
+src="thunder-logo.png"
+alt="MK Thunder logo">
 <div class="team-name">MK Thunder</div>
 </div>
 
 <div class="score" id="latestScore">-</div>
 
 <div>
-<div class="team-placeholder" id="latestOpponentBadge">?</div>
+<img class="next-team-logo"
+id="latestOpponentLogo"
+src=""
+alt="Opponent logo">
 <div class="team-name" id="latestOpponentName">Opponet</div>
 </div>
 
@@ -1123,19 +1128,11 @@ if (opponent) {
 document.getElementById("latestOpponentName").textContent =
 opponent["Team Name"];
 
-const shortName = String(
-opponent["Short name"] || opponent["Team Name"]
-);
+document.getElementById("latestOpponentLogo").src =
+opponent["Logo file"];
 
-const initials = shortName
-.split(" ")
-.map(word => word.charAt(0))
-.join("")
-.substring(0, 2)
-.toUpperCase();
-
-document.getElementById("latestOpponentBadge").textContent =
-initials;
+document.getElementById("latestOpponentLogo").alt =
+`${opponent["Team Name"]} logo`;
 }
 
 
