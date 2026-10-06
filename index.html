@@ -1098,8 +1098,13 @@ if (latestGame) {
 document.getElementById("latestScore").textContent =
 `${latestGame["Thunder Score"]} - ${latestGame["Opponent Score"]}`;
 
-document.getElementById("latestInfo").textContent =
+const latestInfo = document.getElementById("latestInfo");
+
+if (latestInfo) {
+latestInfo.textContent =
 `${latestGame["Competition"]} • ${latestGame["Venue"]}`;
+}
+
 
 fetch("data.json")
 .then(response => response.json())
