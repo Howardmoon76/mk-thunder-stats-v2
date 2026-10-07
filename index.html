@@ -404,6 +404,7 @@ place-items: center;
 font-size: 22px;
 font-weight: 900;
 background: #0a1c22;
+object-fit: cover;
 }
 
 .player-name {
@@ -861,24 +862,53 @@ Face-off: <span id="next-time">TBC</span><br>
 <div class="leader-grid">
 
 <div class="leader">
+
 <div class="leader-category">Goals</div>
-<div class="player-circle">—</div>
-<div class="player-name">No Leader Yet</div>
-<div class="leader-number">0</div>
+
+<img
+class="player-circle"
+id="goalsLeaderPhoto"
+src="thunder-logo.png"
+alt="Goals leader">
+
+<div class="player-name" id="goalsLeaderName">No Leader Yet</div>
+
+<div class="leader-number" id="goalsLeaderNumber">0</div>
+
 </div>
 
+
 <div class="leader">
+
 <div class="leader-category">Assists</div>
-<div class="player-circle">—</div>
-<div class="player-name">No Leader Yet</div>
-<div class="leader-number">0</div>
+
+<img
+class="player-circle"
+id="assistsLeaderPhoto"
+src="thunder-logo.png"
+alt="Assists leader">
+
+<div class="player-name" id="assistsLeaderName">No Leader Yet</div>
+
+<div class="leader-number" id="assistsLeaderNumber">0</div>
+
 </div>
 
+
 <div class="leader">
+
 <div class="leader-category">Points</div>
-<div class="player-circle">—</div>
-<div class="player-name">No Leader Yet</div>
-<div class="leader-number">0</div>
+
+<img
+class="player-circle"
+id="pointsLeaderPhoto"
+src="thunder-logo.png"
+alt="Points leader">
+
+<div class="player-name" id="pointsLeaderName">No Leader Yet</div>
+
+<div class="leader-number" id="pointsLeaderNumber">0</div>
+
 </div>
 
 </div>
@@ -1054,7 +1084,13 @@ total + (Number(game["Thunder Score"]) || 0), 0
 document.getElementById("goalsFor").textContent = goalsFor;
   // Top Scorer from Player Game Stats
 const playerStatsSheet = workbook.Sheets["Player Game Stats"];
+// Players sheet for leader photos
+const playersSheet = workbook.Sheets["Players"];
 
+const rosterPlayers = XLSX.utils.sheet_to_json(playersSheet, {
+range: 2,
+defval: ""
+});
 const playerStats = XLSX.utils.sheet_to_json(playerStatsSheet, {
 range: 2,
 defval: ""
@@ -1064,6 +1100,67 @@ defval: ""
 const competitiveGameIds = new Set(
 completedGames.map(game => game["Game ID"])
 );
+// Team Leaders
+const playerTotals = {};
+
+playerStats
+.filter(row => competitiveGameIds.has(row["Game ID"]))
+.forEach(row => {
+
+const playerId = String(row["Player ID"]).trim();
+const playerName = row["Player Name"];
+
+if (!playerId || !playerName) return;
+
+if (!playerTotals[playerId]) {
+playerTotals[playerId] = {
+id: playerId,
+name: playerName,
+goals: 0,
+assists: 0,
+points: 0
+};
+}
+
+playerTotals[playerId].goals += Number(row["Goals"]) || 0;
+playerTotals[playerId].assists += Number(row["Assists"]) || 0;
+playerTotals[playerId].points += Number(row["Points"]) || 0;
+});
+
+const leaderPlayers = Object.values(playerTotals);
+
+const goalsLeader = [...leaderPlayers]
+.sort((a, b) => b.goals - a.goals)[0];
+
+const assistsLeader = [...leaderPlayers]
+.sort((a, b) => b.assists - a.assists)[0];
+
+const pointsLeader = [...leaderPlayers]
+.sort((a, b) => b.points - a.points)[0];
+
+function showLeader(leader, type) {
+
+if (!leader) return;
+
+const rosterPlayer = rosterPlayers.find(player =>
+String(player["Player ID"]).trim() === leader.id
+);
+
+document.getElementById(`${type}LeaderName`).textContent =
+leader.name;
+
+document.getElementById(`${type}LeaderNumber`).textContent =
+leader[type];
+
+if (rosterPlayer && rosterPlayer["Photo / URL"]) {
+document.getElementById(`${type}LeaderPhoto`).src =
+rosterPlayer["Photo / URL"];
+}
+}
+
+showLeader(goalsLeader, "goals");
+showLeader(assistsLeader, "assists");
+showLeader(pointsLeader, "points");
 
 const goalTotals = {};
 
