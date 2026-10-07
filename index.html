@@ -1207,62 +1207,7 @@ document.getElementById("next-competition").textContent =
 nextGame["Competition"];
 }
 
-});
 
-
-// EXISTING CODE BELOW THIS
-fetch("data.json")
-.then(response => response.json())
-.then(data => {
-
-const upcomingGames = data.games
-.filter(game => game.status === "Upcoming")
-.sort((a, b) => {
-const dateA = new Date(`${a.date}T${a.faceoff}`);
-const dateB = new Date(`${b.date}T${b.faceoff}`);
-return dateA - dateB;
-});
-
-if (upcomingGames.length === 0) return;
-
-const nextGame = upcomingGames[0];
-
-const opponent = data.teams.find(
-team => team.id === nextGame.opponentId
-);
-
-if (!opponent) return;
-
-const date = new Date(`${nextGame.date}T${nextGame.faceoff}`);
-
-const formattedDate = date.toLocaleDateString("en-GB", {
-weekday: "short",
-day: "numeric",
-month: "short",
-year: "numeric"
-});
-
-document.getElementById("next-opponent-name").textContent =
-opponent.name;
-
-document.getElementById("next-opponent-logo").src =
-opponent.logo;
-
-document.getElementById("next-date").textContent =
-formattedDate;
-
-document.getElementById("next-time").textContent =
-nextGame.faceoff;
-
-document.getElementById("next-venue").textContent =
-nextGame.venue;
-
-document.getElementById("next-competition").textContent =
-nextGame.competition;
-
-})
-.catch(error => {
-console.error("Could not load match data:", error);
 });
 </script>
 </body>
