@@ -656,7 +656,7 @@ right: -25px;
 opacity: 0.22;
 }
 }
-.next-team-logo {
+.-team-logo {
 width: 90px !important;
 height: 90px !important;
 max-width: 90px !important;
@@ -1136,6 +1136,75 @@ document.getElementById("latestOpponentLogo").alt =
 }
 
 
+}
+// Next Game from Excel
+const upcomingGames = games
+.filter(game =>
+String(game["Status"]).trim().toLowerCase() === "upcoming"
+)
+.sort((a, b) =>
+new Date(a["Date"]) - new Date(b["Date"])
+);
+
+if (upcomingGames.length > 0) {
+
+const nextGame = upcomingGames[0];
+
+const nextTeamsSheet = workbook.Sheets["Teams"];
+
+const nextTeams = XLSX.utils.sheet_to_json(nextTeamsSheet, {
+range: 2,
+defval: ""
+});
+
+const nextOpponentId =
+String(nextGame["Opponent ID"]).trim();
+
+const nextOpponent = nextTeams.find(team =>
+String(team["Team ID"]).trim() === nextOpponentId
+);
+
+if (nextOpponent) {
+document.getElementById("next-opponent-name").textContent =
+nextOpponent["Team Name"];
+
+document.getElementById("next-opponent-logo").src =
+nextOpponent["Logo file"];
+
+document.getElementById("next-opponent-logo").alt =
+`${nextOpponent["Team Name"]} logo`;
+}
+
+const nextDate = new Date(nextGame["Date"]);
+
+const formattedNextDate =
+nextDate.toLocaleDateString("en-GB", {
+weekday: "short",
+day: "numeric",
+month: "short",
+year: "numeric"
+});
+
+const faceoffValue = nextGame["Face-off"];
+
+const faceoffText = faceoffValue instanceof Date
+? faceoffValue.toLocaleTimeString("en-GB", {
+hour: "2-digit",
+minute: "2-digit"
+})
+: String(faceoffValue);
+
+document.getElementById("next-date").textContent =
+formattedNextDate;
+
+document.getElementById("next-time").textContent =
+faceoffText;
+
+document.getElementById("next-venue").textContent =
+nextGame["Venue"];
+
+document.getElementById("next-competition").textContent =
+nextGame["Competition"];
 }
 
 });
