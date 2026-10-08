@@ -938,26 +938,7 @@ alt="Points leader">
 </tr>
 </thead>
 
-<tbody>
-
-<tr>
-<td>1</td>
-<td>—</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr>
-
-<tr class="highlight-row">
-<td>—</td>
-<td>MK THUNDER</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-<td>0</td>
-</tr>
-
+<tbody id="leagueTableBody">
 </tbody>
 
 </table>
@@ -1161,6 +1142,73 @@ rosterPlayer["Photo / URL"];
 showLeader(goalsLeader, "goals");
 showLeader(assistsLeader, "assists");
 showLeader(pointsLeader, "points");
+// Homepage League Table
+const leagueTableSheet = workbook.Sheets["League Table"];
+
+const leagueTable = XLSX.utils.sheet_to_json(leagueTableSheet, {
+range: 2,
+defval: ""
+});
+
+// Sort by Points, then Goal Difference, then Goals For
+const sortedLeagueTable = leagueTable
+.filter(team => team["Team"] !== "")
+.sort((a, b) => {
+const pointsDifference =
+(Number(b["PTS"]) || 0) - (Number(a["PTS"]) || 0);
+
+if (pointsDifference !== 0) return pointsDifference;
+
+const goalDifference =
+(Number(b["GD"]) || 0) - (Number(a["GD"]) || 0);
+
+if (goalDifference !== 0) return goalDifference;
+
+return (Number(b["GF"]) || 0) - (Number(a["GF"]) || 0);
+});
+
+const thunderIndex = sortedLeagueTable.findIndex(team =>
+String(team["Team"]).trim().toLowerCase() === "mk thunder"
+);
+
+if (thunderIndex !== -1) {
+
+const start = Math.max(
+0,
+Math.min(thunderIndex - 2, sortedLeagueTable.length - 5)
+);
+
+const homepageTeams = sortedLeagueTable.slice(start, start + 5);
+
+const tableBody = document.getElementById("leagueTableBody");
+
+tableBody.innerHTML = "";
+
+homepageTeams.forEach(team => {
+
+const actualPosition =
+sortedLeagueTable.indexOf(team) + 1;
+
+const row = document.createElement("tr");
+
+if (
+String(team["Team"]).trim().toLowerCase() === "mk thunder"
+) {
+row.classList.add("highlight-row");
+}
+
+row.innerHTML = `
+<td>${actualPosition}</td>
+<td>${team["Team"]}</td>
+<td>${team["GP"]}</td>
+<td>${team["W"]}</td>
+<td>${team["L"]}</td>
+<td>${team["PTS"]}</td>
+`;
+
+tableBody.appendChild(row);
+});
+}
 
 const goalTotals = {};
 
