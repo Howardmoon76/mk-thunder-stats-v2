@@ -312,4 +312,91 @@ class="game-logo"
 Thunder <span>Pairs</span>
 </h1>
 
-<div class="
+<div class="subtitle">
+Match The Players
+</div>
+
+
+<div class="instructions">
+
+Find the matching MK Thunder players by turning over two cards at a time.
+
+Match every pair in as few moves — and as quickly — as you can.
+
+</div>
+
+
+<div class="difficulty-title">
+Choose Difficulty
+</div>
+
+
+<div class="difficulty-grid">
+
+<div class="difficulty selected" data-pairs="6">
+<strong>Easy</strong>
+<span>6 Pairs</span>
+</div>
+
+<div class="difficulty" data-pairs="8">
+<strong>Medium</strong>
+<span>8 Pairs</span>
+</div>
+
+<div class="difficulty" data-pairs="12">
+<strong>Hard</strong>
+<span>12 Pairs</span>
+</div>
+
+</div>
+
+
+<button class="start-button" id="startGame">
+Start Game
+</button>
+
+</div>
+
+</main>
+
+
+<script>
+
+let selectedPairs = 6;
+
+const difficulties =
+document.querySelectorAll(".difficulty");
+
+difficulties.forEach(option => {
+
+option.addEventListener("click", () => {
+
+difficulties.forEach(item =>
+item.classList.remove("selected")
+);
+
+option.classList.add("selected");
+
+selectedPairs =
+Number(option.dataset.pairs);
+
+});
+
+});
+
+
+document
+.getElementById("startGame")
+.addEventListener("click", () => {
+
+alert(
+`Thunder Pairs - ${selectedPairs} pairs selected!`
+);
+
+});
+
+</script>
+
+
+</body>
+</html>
