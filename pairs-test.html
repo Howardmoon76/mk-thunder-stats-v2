@@ -1,0 +1,1606 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Thunder Pairs | MK Thunder</title>
+
+
+<style>
+
+* {
+box-sizing: border-box;
+}
+
+:root {
+--bg: #050b0e;
+--panel: #0a151a;
+--line: #29424a;
+--teal: #22d3df;
+--white: #f5f7f8;
+--muted: #91a4aa;
+}
+
+
+body {
+
+margin: 0;
+
+min-height: 100vh;
+
+font-family: Arial, Helvetica, sans-serif;
+
+color: var(--white);
+
+background:
+radial-gradient(
+circle at top,
+rgba(34,211,223,.12),
+transparent 35%
+),
+linear-gradient(
+180deg,
+#07151b 0%,
+#03080b 100%
+);
+
+}
+
+
+/* ===========================
+NAVIGATION
+=========================== */
+
+nav {
+
+background: #020608;
+
+border-bottom: 1px solid var(--line);
+
+}
+
+
+.nav-inner {
+
+width: min(1180px, calc(100% - 32px));
+
+margin: auto;
+
+min-height: 62px;
+
+display: flex;
+
+align-items: center;
+
+overflow-x: auto;
+
+}
+
+
+.nav-inner a {
+
+padding: 22px 20px;
+
+color: white;
+
+text-decoration: none;
+
+font-size: 13px;
+
+font-weight: bold;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+border-bottom: 3px solid transparent;
+
+}
+
+
+.nav-inner a:hover,
+.nav-inner a.active {
+
+color: var(--teal);
+
+border-bottom-color: var(--teal);
+
+}
+
+
+/* ===========================
+MAIN
+=========================== */
+
+.game-page {
+
+width: min(1180px, calc(100% - 30px));
+
+margin: auto;
+
+padding: 35px 0 60px;
+
+}
+
+
+/* ===========================
+START SCREEN
+=========================== */
+
+.start-panel {
+
+width: min(760px, 100%);
+
+margin: 30px auto;
+
+text-align: center;
+
+padding: 40px;
+
+border: 1px solid var(--line);
+
+border-radius: 10px;
+
+background:
+linear-gradient(
+145deg,
+rgba(10,25,31,.98),
+rgba(5,13,17,.98)
+);
+
+}
+
+
+.game-logo {
+
+width: 150px;
+
+height: auto;
+
+margin-bottom: 15px;
+
+}
+
+
+.game-title {
+
+margin: 0;
+
+font-size: clamp(42px, 8vw, 72px);
+
+font-weight: 900;
+
+font-style: italic;
+
+text-transform: uppercase;
+
+}
+
+
+.game-title span {
+
+color: var(--teal);
+
+}
+
+
+.subtitle {
+
+margin-top: 8px;
+
+color: var(--muted);
+
+text-transform: uppercase;
+
+letter-spacing: 5px;
+
+font-weight: bold;
+
+}
+
+
+.instructions {
+
+max-width: 520px;
+
+margin: 25px auto;
+
+color: #d7e0e3;
+
+line-height: 1.7;
+
+}
+
+
+.difficulty-title {
+
+color: var(--teal);
+
+text-transform: uppercase;
+
+font-weight: bold;
+
+margin-bottom: 15px;
+
+}
+
+
+.difficulty-grid {
+
+display: grid;
+
+grid-template-columns: repeat(3, 1fr);
+
+gap: 12px;
+
+margin-bottom: 28px;
+
+}
+
+
+.difficulty {
+
+padding: 17px 10px;
+
+border: 1px solid var(--line);
+
+border-radius: 6px;
+
+background: #071318;
+
+cursor: pointer;
+
+}
+
+
+.difficulty:hover {
+
+border-color: var(--teal);
+
+}
+
+
+.difficulty.selected {
+
+border-color: var(--teal);
+
+background: rgba(34,211,223,.12);
+
+}
+
+
+.difficulty strong {
+
+display: block;
+
+font-size: 18px;
+
+}
+
+
+.difficulty span {
+
+display: block;
+
+color: var(--muted);
+
+margin-top: 5px;
+
+font-size: 12px;
+
+}
+
+
+/* ===========================
+BUTTON
+=========================== */
+
+.button {
+
+border: 2px solid var(--teal);
+
+background: transparent;
+
+color: white;
+
+padding: 12px 25px;
+
+font-size: 12px;
+
+font-weight: 900;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+cursor: pointer;
+
+}
+
+
+.button:hover {
+
+background: var(--teal);
+
+color: #031014;
+
+}
+
+
+/* ===========================
+GAME SCREEN
+=========================== */
+
+#gameArea {
+
+display: none;
+
+}
+
+
+.game-heading {
+
+text-align: center;
+
+margin-bottom: 25px;
+
+}
+
+
+.game-heading h1 {
+
+margin: 0;
+
+font-size: 48px;
+
+font-style: italic;
+
+text-transform: uppercase;
+
+}
+
+
+.game-heading h1 span {
+
+color: var(--teal);
+
+}
+
+
+.game-heading p {
+
+color: var(--muted);
+
+letter-spacing: 3px;
+
+text-transform: uppercase;
+
+}
+
+
+/* ===========================
+SCORE BAR
+=========================== */
+
+.score-bar {
+
+display: grid;
+
+grid-template-columns: repeat(3, 1fr);
+
+gap: 12px;
+
+max-width: 760px;
+
+margin: 0 auto 25px;
+
+}
+
+
+.score-box {
+
+text-align: center;
+
+border: 1px solid var(--line);
+
+background: var(--panel);
+
+padding: 15px;
+
+}
+
+
+.score-label {
+
+color: var(--muted);
+
+font-size: 11px;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+}
+
+
+.score-number {
+
+color: var(--teal);
+
+font-size: 28px;
+
+font-weight: 900;
+
+margin-top: 4px;
+
+}
+
+
+/* ===========================
+GAME BOARD
+=========================== */
+
+.game-board {
+
+max-width: 900px;
+
+margin: auto;
+
+display: grid;
+
+grid-template-columns: repeat(4, 1fr);
+
+gap: 13px;
+
+}
+
+
+/* ===========================
+CARDS
+=========================== */
+
+.card {
+
+aspect-ratio: 3 / 4;
+
+cursor: pointer;
+
+perspective: 1000px;
+
+}
+
+
+.card-inner {
+
+width: 100%;
+
+height: 100%;
+
+position: relative;
+
+transition: transform .45s;
+
+transform-style: preserve-3d;
+
+}
+
+
+.card.flipped .card-inner,
+.card.matched .card-inner {
+
+transform: rotateY(180deg);
+
+}
+
+
+.card-face {
+
+position: absolute;
+
+inset: 0;
+
+border: 2px solid var(--teal);
+
+border-radius: 9px;
+
+overflow: hidden;
+
+backface-visibility: hidden;
+
+}
+
+
+/* CARD BACK */
+
+.card-back {
+
+background:
+radial-gradient(
+circle,
+rgba(34,211,223,.15),
+transparent 55%
+),
+#071318;
+
+display: flex;
+
+align-items: center;
+
+justify-content: center;
+
+}
+
+
+.card-back img {
+
+width: 70%;
+
+max-height: 75%;
+
+object-fit: contain;
+
+filter:
+drop-shadow(
+0 0 14px rgba(34,211,223,.25)
+);
+
+}
+
+
+/* PLAYER SIDE */
+
+.card-front {
+
+transform: rotateY(180deg);
+
+background: #071318;
+
+display: flex;
+
+flex-direction: column;
+
+}
+
+
+.player-photo {
+
+width: 100%;
+
+flex: 1;
+
+min-height: 0;
+
+object-fit: cover;
+
+object-position: top center;
+
+}
+
+
+.player-details {
+
+padding: 8px 5px;
+
+background: #071318;
+
+text-align: center;
+
+}
+
+
+.player-number {
+
+color: var(--teal);
+
+font-size: 13px;
+
+font-weight: 900;
+
+}
+
+
+.player-card-name {
+
+font-size: 12px;
+
+font-weight: 900;
+
+text-transform: uppercase;
+
+margin-top: 2px;
+
+}
+
+
+/* MATCH */
+
+.card.matched .card-face {
+
+box-shadow:
+0 0 15px rgba(34,211,223,.5);
+
+}
+
+
+/* ===========================
+CONTROLS
+=========================== */
+
+.game-controls {
+
+text-align: center;
+
+margin-top: 25px;
+
+display: flex;
+
+justify-content: center;
+
+gap: 12px;
+
+flex-wrap: wrap;
+
+}
+
+
+/* ===========================
+WIN MESSAGE
+=========================== */
+
+.win-message {
+
+display: none;
+
+max-width: 600px;
+
+margin: 25px auto 0;
+
+padding: 22px;
+
+text-align: center;
+
+border: 1px solid var(--teal);
+
+background: rgba(34,211,223,.08);
+
+}
+
+
+.win-message h2 {
+
+color: var(--teal);
+
+margin-top: 0;
+
+text-transform: uppercase;
+
+}
+
+
+/* ===========================
+MOBILE
+=========================== */
+
+@media (max-width: 700px) {
+
+.difficulty-grid {
+
+grid-template-columns: 1fr;
+
+}
+
+
+.game-board {
+
+grid-template-columns: repeat(3, 1fr);
+
+gap: 8px;
+
+}
+
+
+.score-bar {
+
+gap: 7px;
+
+}
+
+
+.score-number {
+
+font-size: 21px;
+
+}
+
+
+.player-card-name {
+
+font-size: 9px;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<nav>
+
+<div class="nav-inner">
+
+<a href="index.html">Home</a>
+
+<a href="fixtures.html">Fixtures</a>
+
+<a href="results.html">Results</a>
+
+<a href="players.html">Players</a>
+
+<a href="stats.html">Stats</a>
+
+<a href="tables.html">Tables</a>
+
+<a class="active" href="pairs-test.html">
+Pairs Game
+</a>
+
+</div>
+
+</nav>
+
+
+<main class="game-page">
+
+
+<!-- ===========================
+START SCREEN
+=========================== -->
+
+<section
+class="start-panel"
+id="startScreen"
+>
+
+<img
+src="thunder-logo.png"
+alt="MK Thunder"
+class="game-logo"
+>
+
+
+<h1 class="game-title">
+
+Thunder <span>Pairs</span>
+
+</h1>
+
+
+<div class="subtitle">
+
+Match The Players
+
+</div>
+
+
+<div class="instructions">
+
+Turn over two cards at a time and find the matching MK Thunder players.
+
+Match every pair in as few moves — and as quickly — as possible.
+
+</div>
+
+
+<div class="difficulty-title">
+
+Choose Difficulty
+
+</div>
+
+
+<div class="difficulty-grid">
+
+
+<div
+class="difficulty selected"
+data-pairs="6"
+>
+
+<strong>Easy</strong>
+
+<span>6 Pairs</span>
+
+</div>
+
+
+<div
+class="difficulty"
+data-pairs="8"
+>
+
+<strong>Medium</strong>
+
+<span>8 Pairs</span>
+
+</div>
+
+
+<div
+class="difficulty"
+data-pairs="12"
+>
+
+<strong>Hard</strong>
+
+<span>12 Pairs</span>
+
+</div>
+
+
+</div>
+
+
+<button
+class="button"
+id="startButton"
+>
+
+Start Game
+
+</button>
+
+
+</section>
+
+
+
+<!-- ===========================
+GAME SCREEN
+=========================== -->
+
+<section id="gameArea">
+
+
+<div class="game-heading">
+
+<h1>
+
+Thunder <span>Pairs</span>
+
+</h1>
+
+<p>
+
+Match The Players
+
+</p>
+
+</div>
+
+
+
+<div class="score-bar">
+
+
+<div class="score-box">
+
+<div class="score-label">
+Time
+</div>
+
+<div
+class="score-number"
+id="timer"
+>
+00:00
+</div>
+
+</div>
+
+
+
+<div class="score-box">
+
+<div class="score-label">
+Moves
+</div>
+
+<div
+class="score-number"
+id="moves"
+>
+0
+</div>
+
+</div>
+
+
+
+<div class="score-box">
+
+<div class="score-label">
+Pairs Found
+</div>
+
+<div
+class="score-number"
+id="pairsFound"
+>
+0 / 6
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<div
+class="game-board"
+id="gameBoard"
+>
+</div>
+
+
+
+<div
+class="win-message"
+id="winMessage"
+>
+
+<h2>
+All Pairs Found! 🏒
+</h2>
+
+<div id="finalScore">
+</div>
+
+</div>
+
+
+
+<div class="game-controls">
+
+
+<button
+class="button"
+id="newGame"
+>
+
+New Game
+
+</button>
+
+
+<button
+class="button"
+id="changeDifficulty"
+>
+
+Change Difficulty
+
+</button>
+
+
+</div>
+
+
+</section>
+
+
+</main>
+
+
+
+<script>
+
+
+/* ===========================
+PLAYERS
+=========================== */
+
+const players = [
+
+{
+name: "Sam Peters",
+number: 9,
+photo: "Peters.png"
+},
+
+{
+name: "Marks Kanins",
+number: 97,
+photo: "marks.png"
+},
+
+{
+name: "Dominic Wealthall",
+number: 74,
+photo: "dom.png"
+},
+
+{
+name: "Aaron Burton",
+number: 29,
+photo: "arron.png"
+},
+
+{
+name: "Charlie Russell",
+number: 12,
+photo: "russell.png"
+},
+
+{
+name: "Lewis Smith",
+number: 13,
+photo: "smith.png"
+},
+
+{
+name: "Robert Oxley",
+number: 5,
+photo: "rob.png"
+},
+
+{
+name: "Madi Wright",
+number: 10,
+photo: "madi.png"
+},
+
+{
+name: "Lizzie Nowik",
+number: 2,
+photo: "lizzie.png"
+},
+
+{
+name: "Nicole Jackson",
+number: 86,
+photo: "nicole.png"
+},
+
+{
+name: "Xander Robinson",
+number: 14,
+photo: "robinson.png"
+},
+
+{
+name: "Joshua Blackwood",
+number: 18,
+photo: "Josh.png"
+}
+
+];
+
+
+/* ===========================
+GAME VARIABLES
+=========================== */
+
+let selectedPairs = 6;
+
+let firstCard = null;
+
+let secondCard = null;
+
+let boardLocked = false;
+
+let moves = 0;
+
+let matches = 0;
+
+let seconds = 0;
+
+let timerInterval = null;
+
+
+/* ===========================
+DIFFICULTY BUTTONS
+=========================== */
+
+const difficultyButtons =
+document.querySelectorAll(".difficulty");
+
+
+difficultyButtons.forEach(button => {
+
+button.addEventListener(
+"click",
+() => {
+
+difficultyButtons.forEach(
+item =>
+item.classList.remove("selected")
+);
+
+
+button.classList.add("selected");
+
+
+selectedPairs =
+Number(button.dataset.pairs);
+
+}
+);
+
+});
+
+
+/* ===========================
+SHUFFLE
+=========================== */
+
+function shuffle(array) {
+
+for (
+let i = array.length - 1;
+i > 0;
+i--
+) {
+
+const j =
+Math.floor(
+Math.random() * (i + 1)
+);
+
+
+[
+array[i],
+array[j]
+] =
+[
+array[j],
+array[i]
+];
+
+}
+
+
+return array;
+
+}
+
+
+/* ===========================
+START GAME
+=========================== */
+
+function startGame() {
+
+
+document
+.getElementById("startScreen")
+.style.display =
+"none";
+
+
+document
+.getElementById("gameArea")
+.style.display =
+"block";
+
+
+document
+.getElementById("winMessage")
+.style.display =
+"none";
+
+
+firstCard = null;
+
+secondCard = null;
+
+boardLocked = false;
+
+moves = 0;
+
+matches = 0;
+
+seconds = 0;
+
+
+document
+.getElementById("moves")
+.textContent =
+"0";
+
+
+document
+.getElementById("timer")
+.textContent =
+"00:00";
+
+
+document
+.getElementById("pairsFound")
+.textContent =
+`0 / ${selectedPairs}`;
+
+
+clearInterval(timerInterval);
+
+
+timerInterval =
+setInterval(() => {
+
+seconds++;
+
+
+const minutes =
+String(
+Math.floor(seconds / 60)
+)
+.padStart(2, "0");
+
+
+const remainingSeconds =
+String(
+seconds % 60
+)
+.padStart(2, "0");
+
+
+document
+.getElementById("timer")
+.textContent =
+`${minutes}:${remainingSeconds}`;
+
+}, 1000);
+
+
+createBoard();
+
+}
+
+
+/* ===========================
+CREATE BOARD
+=========================== */
+
+function createBoard() {
+
+
+const board =
+document
+.getElementById("gameBoard");
+
+
+board.innerHTML =
+"";
+
+
+const selectedPlayers =
+shuffle([...players])
+.slice(0, selectedPairs);
+
+
+let cards = [];
+
+
+selectedPlayers.forEach(player => {
+
+cards.push({...player});
+
+cards.push({...player});
+
+});
+
+
+cards =
+shuffle(cards);
+
+
+cards.forEach(player => {
+
+
+const card =
+document.createElement("div");
+
+
+card.className =
+"card";
+
+
+card.dataset.player =
+player.name;
+
+
+card.innerHTML = `
+
+<div class="card-inner">
+
+<div class="card-face card-back">
+
+<img
+src="thunder-logo.png"
+alt="Thunder card">
+
+</div>
+
+
+<div class="card-face card-front">
+
+<img
+class="player-photo"
+src="${player.photo}"
+alt="${player.name}">
+
+<div class="player-details">
+
+<div class="player-number">
+#${player.number}
+</div>
+
+<div class="player-card-name">
+${player.name}
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+`;
+
+
+card.addEventListener(
+"click",
+() => flipCard(card)
+);
+
+
+board.appendChild(card);
+
+});
+
+}
+
+
+/* ===========================
+FLIP CARD
+=========================== */
+
+function flipCard(card) {
+
+
+if (boardLocked)
+return;
+
+
+if (
+card.classList.contains("matched")
+)
+return;
+
+
+if (card === firstCard)
+return;
+
+
+card.classList.add("flipped");
+
+
+if (!firstCard) {
+
+firstCard = card;
+
+return;
+
+}
+
+
+secondCard = card;
+
+
+moves++;
+
+
+document
+.getElementById("moves")
+.textContent =
+moves;
+
+
+checkMatch();
+
+}
+
+
+/* ===========================
+CHECK MATCH
+=========================== */
+
+function checkMatch() {
+
+
+if (
+firstCard.dataset.player ===
+secondCard.dataset.player
+) {
+
+
+firstCard
+.classList
+.add("matched");
+
+
+secondCard
+.classList
+.add("matched");
+
+
+matches++;
+
+
+document
+.getElementById("pairsFound")
+.textContent =
+`${matches} / ${selectedPairs}`;
+
+
+resetCards();
+
+
+if (
+matches === selectedPairs
+) {
+
+
+clearInterval(
+timerInterval
+);
+
+
+setTimeout(
+showWinner,
+400
+);
+
+}
+
+
+} else {
+
+
+boardLocked = true;
+
+
+setTimeout(() => {
+
+
+firstCard
+.classList
+.remove("flipped");
+
+
+secondCard
+.classList
+.remove("flipped");
+
+
+resetCards();
+
+
+}, 850);
+
+}
+
+}
+
+
+/* ===========================
+RESET CARDS
+=========================== */
+
+function resetCards() {
+
+firstCard = null;
+
+secondCard = null;
+
+boardLocked = false;
+
+}
+
+
+/* ===========================
+WINNER
+=========================== */
+
+function showWinner() {
+
+
+const message =
+document
+.getElementById("winMessage");
+
+
+message.style.display =
+"block";
+
+
+document
+.getElementById("finalScore")
+.innerHTML =
+
+`You found all
+<strong>${selectedPairs} pairs</strong>
+in
+<strong>${moves} moves</strong>
+and
+<strong>${
+document
+.getElementById("timer")
+.textContent
+}</strong>.`;
+
+}
+
+
+/* ===========================
+BUTTONS
+=========================== */
+
+document
+.getElementById("startButton")
+.addEventListener(
+"click",
+startGame
+);
+
+
+document
+.getElementById("newGame")
+.addEventListener(
+"click",
+startGame
+);
+
+
+document
+.getElementById("changeDifficulty")
+.addEventListener(
+"click",
+() => {
+
+
+clearInterval(
+timerInterval
+);
+
+
+document
+.getElementById("gameArea")
+.style.display =
+"none";
+
+
+document
+.getElementById("startScreen")
+.style.display =
+"block";
+
+}
+);
+
+
+</script>
+
+
+</body>
+
+</html>
