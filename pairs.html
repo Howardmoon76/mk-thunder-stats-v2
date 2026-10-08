@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Thunder Pairs | MK Thunder</title>
+
+<style>
+
+* {
+box-sizing: border-box;
+}
+
+:root {
+--bg: #050b0e;
+--panel: #0a151a;
+--line: #29424a;
+--teal: #22d3df;
+--white: #f5f7f8;
+--muted: #91a4aa;
+}
+
+body {
+margin: 0;
+min-height: 100vh;
+font-family: Arial, Helvetica, sans-serif;
+color: var(--white);
+
+background:
+radial-gradient(circle at top, rgba(34,211,223,.12), transparent 35%),
+linear-gradient(180deg, #07151b 0%, #03080b 100%);
+}
+
+
+/* NAVIGATION */
+
+nav {
+background: #020608;
+border-bottom: 1px solid var(--line);
+}
+
+.nav-inner {
+width: min(1180px, calc(100% - 32px));
+margin: auto;
+
+min-height: 62px;
+
+display: flex;
+align-items: center;
+gap: 5px;
+
+overflow-x: auto;
+}
+
+.nav-inner a {
+padding: 22px 20px;
+color: white;
+text-decoration: none;
+
+font-size: 13px;
+font-weight: bold;
+text-transform: uppercase;
+letter-spacing: 1px;
+
+border-bottom: 3px solid transparent;
+}
+
+.nav-inner a:hover,
+.nav-inner a.active {
+color: var(--teal);
+border-bottom-color: var(--teal);
+}
+
+
+/* GAME START */
+
+.game-page {
+min-height: calc(100vh - 63px);
+
+display: flex;
+justify-content: center;
+align-items: center;
+
+padding: 40px 20px;
+}
+
+.start-panel {
+width: min(760px, 100%);
+
+text-align: center;
+
+padding: 42px;
+
+border: 1px solid var(--line);
+border-radius: 10px;
+
+background:
+linear-gradient(145deg, rgba(10,25,31,.98), rgba(5,13,17,.98));
+
+box-shadow: 0 0 45px rgba(34,211,223,.08);
+}
+
+
+.game-logo {
+width: 170px;
+max-width: 45%;
+margin-bottom: 20px;
+
+filter: drop-shadow(0 0 20px rgba(34,211,223,.25));
+}
+
+
+.game-title {
+margin: 0;
+
+font-size: clamp(42px, 8vw, 72px);
+
+font-weight: 900;
+font-style: italic;
+
+text-transform: uppercase;
+letter-spacing: 2px;
+}
+
+.game-title span {
+color: var(--teal);
+}
+
+
+.subtitle {
+margin-top: 10px;
+
+color: var(--muted);
+
+text-transform: uppercase;
+letter-spacing: 5px;
+
+font-weight: bold;
+font-size: 13px;
+}
+
+
+.instructions {
+max-width: 520px;
+
+margin: 28px auto;
+
+line-height: 1.7;
+color: #d7e0e3;
+}
+
+
+/* DIFFICULTY */
+
+.difficulty-title {
+margin-bottom: 14px;
+
+color: var(--teal);
+
+text-transform: uppercase;
+letter-spacing: 2px;
+
+font-weight: bold;
+}
+
+
+.difficulty-grid {
+display: grid;
+grid-template-columns: repeat(3, 1fr);
+
+gap: 12px;
+
+margin-bottom: 28px;
+}
+
+
+.difficulty {
+padding: 18px 10px;
+
+border: 1px solid var(--line);
+border-radius: 6px;
+
+background: #071318;
+
+cursor: pointer;
+
+transition: .2s ease;
+}
+
+
+.difficulty:hover {
+border-color: var(--teal);
+
+transform: translateY(-2px);
+}
+
+
+.difficulty.selected {
+border-color: var(--teal);
+
+background: rgba(34,211,223,.12);
+
+box-shadow: 0 0 15px rgba(34,211,223,.12);
+}
+
+
+.difficulty strong {
+display: block;
+
+font-size: 18px;
+
+color: var(--white);
+
+text-transform: uppercase;
+}
+
+
+.difficulty span {
+display: block;
+
+margin-top: 6px;
+
+color: var(--muted);
+
+font-size: 12px;
+}
+
+
+/* BUTTON */
+
+.start-button {
+display: inline-block;
+
+padding: 14px 34px;
+
+border: 2px solid var(--teal);
+
+color: white;
+
+background: transparent;
+
+text-decoration: none;
+
+font-weight: 900;
+
+text-transform: uppercase;
+
+letter-spacing: 2px;
+
+cursor: pointer;
+
+transition: .2s ease;
+}
+
+
+.start-button:hover {
+background: var(--teal);
+color: #031014;
+
+box-shadow: 0 0 20px rgba(34,211,223,.25);
+}
+
+
+@media (max-width: 620px) {
+
+.start-panel {
+padding: 28px 18px;
+}
+
+.difficulty-grid {
+grid-template-columns: 1fr;
+}
+
+}
+
+</style>
+</head>
+
+
+<body>
+
+
+<nav>
+
+<div class="nav-inner">
+
+<a href="index.html">Home</a>
+<a href="fixtures.html">Fixtures</a>
+<a href="results.html">Results</a>
+<a href="players.html">Players</a>
+<a href="stats.html">Stats</a>
+<a href="tables.html">Tables</a>
+<a class="active" href="pairs.html">Pairs Game</a>
+
+</div>
+
+</nav>
+
+
+<main class="game-page">
+
+<div class="start-panel">
+
+<img
+src="thunder-logo.png"
+alt="MK Thunder"
+class="game-logo"
+>
+
+<h1 class="game-title">
+Thunder <span>Pairs</span>
+</h1>
+
+<div class="
