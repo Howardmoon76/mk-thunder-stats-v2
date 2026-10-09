@@ -683,21 +683,35 @@ flex-wrap: wrap;
 WIN MESSAGE
 =========================== */
 
-.win-message {
+win-message {
 
 display: none;
 
 max-width: 600px;
 
-margin: 25px auto 0;
+margin: 30px auto 0;
 
-padding: 22px;
+padding: 30px 22px;
 
 text-align: center;
 
-border: 1px solid var(--teal);
+border: 2px solid var(--teal);
 
-background: rgba(34,211,223,.08);
+border-radius: 12px;
+
+background:
+radial-gradient(
+circle at top,
+rgba(34,211,223,.18),
+transparent 60%
+),
+#071318;
+
+box-shadow:
+0 0 30px rgba(34,211,223,.25);
+
+animation:
+winPop .6s ease;
 
 }
 
@@ -706,9 +720,55 @@ background: rgba(34,211,223,.08);
 
 color: var(--teal);
 
-margin-top: 0;
+margin: 0 0 12px;
+
+font-size: 32px;
+
+font-style: italic;
 
 text-transform: uppercase;
+
+letter-spacing: 2px;
+
+}
+
+
+#finalScore {
+
+color: white;
+
+font-size: 17px;
+
+line-height: 1.7;
+
+}
+
+
+#finalScore strong {
+
+color: var(--teal);
+
+font-size: 21px;
+
+}
+
+
+@keyframes winPop {
+
+0% {
+transform: scale(.75);
+opacity: 0;
+}
+
+60% {
+transform: scale(1.06);
+opacity: 1;
+}
+
+100% {
+transform: scale(1);
+opacity: 1;
+}
 
 }
 
