@@ -1614,84 +1614,92 @@ WINNER
 
 function showWinner() {
 
-
 const message =
-document
-.getElementById("winMessage");
+document.getElementById("winMessage");
+
+message.style.display = "block";
 
 
-message.style.display =
-"block";
+/* BEST SCORE */
+
+const storageKey =
+`thunderPairsBest_${selectedPairs}`;
+
+const savedBest =
+JSON.parse(
+localStorage.getItem(storageKey)
+);
+
+
+let isNewBest = false;
+
+
+if (
+!savedBest ||
+moves < savedBest.moves ||
+(
+moves === savedBest.moves &&
+seconds < savedBest.seconds
+)
+) {
+
+isNewBest = true;
+
+localStorage.setItem(
+storageKey,
+JSON.stringify({
+moves: moves,
+seconds: seconds
+})
+);
+
+}
+
+
+const best =
+JSON.parse(
+localStorage.getItem(storageKey)
+);
+
+
+const bestMinutes =
+String(
+Math.floor(best.seconds / 60)
+).padStart(2, "0");
+
+
+const bestSeconds =
+String(
+best.seconds % 60
+).padStart(2, "0");
+
+
+const bestTime =
+`${bestMinutes}:${bestSeconds}`;
 
 
 document
 .getElementById("finalScore")
-.innerHTML =
+.innerHTML = `
 
-`You found all
+You found all
 <strong>${selectedPairs} pairs</strong>
 in
 <strong>${moves} moves</strong>
 and
-<strong>${
-document
-.getElementById("timer")
-.textContent
-}</strong>.`;
+<strong>${document.getElementById("timer").textContent}</strong>.
 
+<br><br>
+
+${
+isNewBest
+? "🏆 <strong>NEW BEST SCORE!</strong><br>"
+: ""
 }
 
+Best:
+<strong>${best.moves} moves</strong>
+•
+<strong>${bestTime}</strong>
 
-/* ===========================
-BUTTONS
-=========================== */
-
-document
-.getElementById("startButton")
-.addEventListener(
-"click",
-startGame
-);
-
-
-document
-.getElementById("newGame")
-.addEventListener(
-"click",
-startGame
-);
-
-
-document
-.getElementById("changeDifficulty")
-.addEventListener(
-"click",
-() => {
-
-
-clearInterval(
-timerInterval
-);
-
-
-document
-.getElementById("gameArea")
-.style.display =
-"none";
-
-
-document
-.getElementById("startScreen")
-.style.display =
-"block";
-
-}
-);
-
-
-</script>
-
-
-</body>
-
-</html>
+`;
