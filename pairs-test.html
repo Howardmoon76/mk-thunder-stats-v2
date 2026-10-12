@@ -1704,4 +1704,50 @@ Best:
 
 `;
 }
-  
+
+  /* ===========================
+BUTTONS
+=========================== */
+
+document
+.getElementById("startButton")
+.addEventListener(
+"click",
+startGame
+);
+
+
+document
+.getElementById("newGame")
+.addEventListener(
+"click",
+startGame
+);
+
+
+document
+.getElementById("changeDifficulty")
+.addEventListener(
+"click",
+() => {
+
+clearInterval(timerInterval);
+
+document
+.getElementById("gameArea")
+.style.display = "none";
+
+document
+.getElementById("startScreen")
+.style.display = "block";
+
+}
+);
+
+
+</script>
+
+</body>
+
+</html>
+
