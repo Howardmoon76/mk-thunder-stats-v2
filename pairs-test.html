@@ -941,6 +941,10 @@ data-pairs="12"
 
 <span>12 Pairs</span>
 
+<span id="hardBest">
+Best: —
+</span>
+
 </div>
 
 
@@ -1276,6 +1280,43 @@ mediumBest.textContent =
 
 
 showMediumBest();
+
+  function showHardBest() {
+
+const savedBest =
+JSON.parse(
+localStorage.getItem(
+"thunderPairsBest_12"
+)
+);
+
+const hardBest =
+document.getElementById("hardBest");
+
+
+if (!savedBest || !hardBest)
+return;
+
+
+const minutes =
+String(
+Math.floor(savedBest.seconds / 60)
+).padStart(2, "0");
+
+
+const seconds =
+String(
+savedBest.seconds % 60
+).padStart(2, "0");
+
+
+hardBest.textContent =
+`Best: ${savedBest.moves} moves • ${minutes}:${seconds}`;
+
+}
+
+
+showHardBest();
   
 /* ===========================
 DIFFICULTY BUTTONS
