@@ -1565,7 +1565,57 @@ audio.currentTime + 0.4
 );
 
 }
+function playWinSound() {
 
+const AudioContext =
+window.AudioContext ||
+window.webkitAudioContext;
+
+const audio =
+new AudioContext();
+
+const gain =
+audio.createGain();
+
+gain.connect(audio.destination);
+
+gain.gain.setValueAtTime(
+0.15,
+audio.currentTime
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.001,
+audio.currentTime + 1
+);
+
+
+const notes = [523, 659, 784];
+
+notes.forEach((frequency, index) => {
+
+const tone =
+audio.createOscillator();
+
+tone.frequency.value =
+frequency;
+
+tone.connect(gain);
+
+tone.start(
+audio.currentTime +
+index * 0.18
+);
+
+tone.stop(
+audio.currentTime +
+index * 0.18 +
+0.3
+);
+
+});
+
+}
 
 /* ===========================
 CHECK MATCH
@@ -1610,7 +1660,7 @@ matches === selectedPairs
 clearInterval(
 timerInterval
 );
-
+playWinSound();
 
 setTimeout(
 showWinner,
