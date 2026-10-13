@@ -1509,6 +1509,62 @@ moves;
 checkMatch();
 
 }
+function playMatchSound() {
+
+const AudioContext =
+window.AudioContext ||
+window.webkitAudioContext;
+
+const audio =
+new AudioContext();
+
+
+const gain =
+audio.createGain();
+
+gain.connect(audio.destination);
+
+gain.gain.setValueAtTime(
+0.12,
+audio.currentTime
+);
+
+gain.gain.exponentialRampToValueAtTime(
+0.001,
+audio.currentTime + 0.4
+);
+
+
+const tone1 =
+audio.createOscillator();
+
+tone1.frequency.value = 660;
+
+tone1.connect(gain);
+
+tone1.start();
+
+tone1.stop(
+audio.currentTime + 0.15
+);
+
+
+const tone2 =
+audio.createOscillator();
+
+tone2.frequency.value = 880;
+
+tone2.connect(gain);
+
+tone2.start(
+audio.currentTime + 0.12
+);
+
+tone2.stop(
+audio.currentTime + 0.4
+);
+
+}
 
 
 /* ===========================
@@ -1532,7 +1588,7 @@ firstCard
 secondCard
 .classList
 .add("matched");
-
+playMatchSound();
 
 matches++;
 
