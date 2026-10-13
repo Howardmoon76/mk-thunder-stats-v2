@@ -926,8 +926,11 @@ data-pairs="8"
 
 <span>8 Pairs</span>
 
-</div>
+<span id="mediumBest">
+Best: —
+</span>
 
+</div>
 
 <div
 class="difficulty"
@@ -1235,8 +1238,44 @@ easyBest.textContent =
 
 }
 
-
 showEasyBest();
+
+  function showMediumBest() {
+
+const savedBest =
+JSON.parse(
+localStorage.getItem(
+"thunderPairsBest_8"
+)
+);
+
+const mediumBest =
+document.getElementById("mediumBest");
+
+
+if (!savedBest || !mediumBest)
+return;
+
+
+const minutes =
+String(
+Math.floor(savedBest.seconds / 60)
+).padStart(2, "0");
+
+
+const seconds =
+String(
+savedBest.seconds % 60
+).padStart(2, "0");
+
+
+mediumBest.textContent =
+`Best: ${savedBest.moves} moves • ${minutes}:${seconds}`;
+
+}
+
+
+showMediumBest();
   
 /* ===========================
 DIFFICULTY BUTTONS
