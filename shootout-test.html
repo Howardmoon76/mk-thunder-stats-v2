@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Thunder Penalty Shootout</title>
+
+
+<style>
+
+* {
+box-sizing: border-box;
+}
+
+:root {
+--teal: #22d3df;
+--panel: #0a151a;
+--line: #29424a;
+--white: #f5f7f8;
+--muted: #91a4aa;
+}
+
+body {
+
+margin: 0;
+
+min-height: 100vh;
+
+font-family: Arial, Helvetica, sans-serif;
+
+color: var(--white);
+
+background:
+radial-gradient(
+circle at top,
+rgba(34,211,223,.12),
+transparent 35%
+),
+linear-gradient(
+180deg,
+#07151b 0%,
+#03080b 100%
+);
+
+}
+
+
+nav {
+
+background: #020608;
+
+border-bottom: 1px solid var(--line);
+
+}
+
+
+.nav-inner {
+
+width: min(1180px, calc(100% - 32px));
+
+margin: auto;
+
+min-height: 62px;
+
+display: flex;
+
+align-items: center;
+
+overflow-x: auto;
+
+}
+
+
+.nav-inner a {
+
+padding: 22px 20px;
+
+color: white;
+
+text-decoration: none;
+
+font-size: 13px;
+
+font-weight: bold;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+border-bottom: 3px solid transparent;
+
+}
+
+
+.nav-inner a:hover,
+.nav-inner a.active {
+
+color: var(--teal);
+
+border-bottom-color: var(--teal);
+
+}
+
+
+.game-page {
+
+width: min(900px, calc(100% - 30px));
+
+margin: auto;
+
+padding: 40px 0;
+
+text-align: center;
+
+}
+
+
+.logo {
+
+width: 130px;
+
+margin-bottom: 10px;
+
+}
+
+
+h1 {
+
+margin: 0;
+
+font-size: clamp(38px, 7vw, 68px);
+
+font-weight: 900;
+
+font-style: italic;
+
+text-transform: uppercase;
+
+}
+
+
+h1 span {
+
+color: var(--teal);
+
+}
+
+
+.subtitle {
+
+margin-top: 8px;
+
+color: var(--muted);
+
+text-transform: uppercase;
+
+letter-spacing: 4px;
+
+}
+
+
+.score-area {
+
+display: grid;
+
+grid-template-columns: repeat(2, 1fr);
+
+gap: 12px;
+
+max-width: 500px;
+
+margin: 30px auto;
+
+}
+
+
+.score-box {
+
+border: 1px solid var(--line);
+
+background: var(--panel);
+
+padding: 18px;
+
+}
+
+
+.score-label {
+
+color: var(--muted);
+
+font-size: 12px;
+
+text-transform: uppercase;
+
+letter-spacing: 1px;
+
+}
+
+
+.score-number {
+
+color: var(--teal);
+
+font-size: 32px;
+
+font-weight: 900;
+
+margin-top: 5px;
+
+}
+
+
+.goal-area {
+
+margin: 30px auto;
+
+max-width: 700px;
+
+padding: 35px 20px;
+
+border: 2px solid var(--teal);
+
+border-radius: 12px;
+
+background:
+linear-gradient(
+180deg,
+rgba(34,211,223,.08),
+rgba(0,0,0,.1)
+);
+
+}
+
+
+.goal-title {
+
+font-size: 24px;
+
+font-weight: 900;
+
+text-transform: uppercase;
+
+margin-bottom: 20px;
+
+}
+
+
+.shoot-buttons {
+
+display: grid;
+
+grid-template-columns: repeat(3, 1fr);
+
+gap: 12px;
+
+}
+
+
+.shot-button {
+
+padding: 20px 10px;
+
+border: 2px solid var(--teal);
+
+background: #071318;
+
+color: white;
+
+font-size: 18px;
+
+font-weight: 900;
+
+text-transform: uppercase;
+
+cursor: pointer;
+
+border-radius: 6px;
+
+}
+
+
+.shot-button:hover {
+
+background: var(--teal);
+
+color: #031014;
+
+}
+
+
+.result {
+
+min-height: 50px;
+
+margin-top: 25px;
+
+font-size: 30px;
+
+font-weight: 900;
+
+text-transform: uppercase;
+
+}
+
+
+.goal-result {
+
+color: #4dff88;
+
+}
+
+
+.save-result {
+
+color: #ff5b5b;
+
+}
+
+
+.game-over {
+
+display: none;
+
+margin: 30px auto 0;
+
+max-width: 500px;
+
+padding: 25px;
+
+border: 2px solid var(--teal);
+
+border-radius: 10px;
+
+background: rgba(34,211,223,.08);
+
+}
+
+
+.game-over h2 {
+
+color: var(--teal);
+
+margin-top: 0;
+
+text-transform: uppercase;
+
+}
+
+
+.new-game {
+
+margin-top: 15px;
+
+padding: 12px 24px;
+
+border: 2px solid var(--teal);
+
+background: transparent;
+
+color: white;
+
+font-weight: 900;
+
+text-transform: uppercase;
+
+cursor: pointer;
+
+}
+
+
+.new-game:hover {
+
+background: var(--teal);
+
+color: #031014;
+
+}
+
+
+@media (max-width: 600px) {
+
+.shoot-buttons {
+
+grid-template-columns: 1fr;
+
+}
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<nav>
+
+<div class="nav-inner">
+
+<a href="index.html">Home</a>
+
+<a href="fixtures.html">Fixtures</a>
+
+<a href="results.html">Results</a>
+
+<a href="players.html">Players</a>
+
+<a href="stats.html">Stats</a>
+
+<a href="tables.html">Tables</a>
+
+<a href="pairs.html">Pairs Game</a>
+
+<a class="active" href="shootout-test.html">Shootout</a>
+
+</div>
+
+</nav>
+
+
+
+<main class="game-page">
+
+
+<img
+src="thunder-logo.png"
+alt="MK Thunder"
+class="logo"
+>
+
+
+<h1>
+
+Penalty <span>Shootout</span>
+
+</h1>
+
+
+<div class="subtitle">
+
+Can You Beat The Netminder?
+
+</div>
+
+
+
+<div class="score-area">
+
+
+<div class="score-box">
+
+<div class="score-label">
+
+Shots
+
+</div>
+
+<div
+class="score-number"
+id="shots"
+>
+
+0 / 5
+
+</div>
+
+</div>
+
+
+
+<div class="score-box">
+
+<div class="score-label">
+
+Goals
+
+</div>
+
+<div
+class="score-number"
+id="goals"
+>
+
+0
+
+</div>
+
+</div>
+
+
+</div>
+
+
+
+<div class="goal-area">
+
+
+<div class="goal-title">
+
+Where do you want to shoot?
+
+</div>
+
+
+<div class="shoot-buttons">
+
+
+<button
+class="shot-button"
+data-shot="left"
+>
+
+⬅ Left
+
+</button>
+
+
+<button
+class="shot-button"
+data-shot="centre"
+>
+
+🎯 Centre
+
+</button>
+
+
+<button
+class="shot-button"
+data-shot="right"
+>
+
+Right ➡
+
+</button>
+
+
+</div>
+
+
+<div
+class="result"
+id="result"
+>
+</div>
+
+
+</div>
+
+
+
+<div
+class="game-over"
+id="gameOver"
+>
+
+<h2>
+
+Shootout Complete! 🏒
+
+</h2>
+
+
+<div id="finalResult">
+</div>
+
+
+<button
+class="new-game"
+id="newGame"
+>
+
+Play Again
+
+</button>
+
+
+</div>
+
+
+</main>
+
+
+
+<script>
+
+
+let shots = 0;
+
+let goals = 0;
+
+let gameFinished = false;
+
+
+const shotButtons =
+document.querySelectorAll(".shot-button");
+
+
+shotButtons.forEach(button => {
+
+button.addEventListener(
+"click",
+() => {
+
+takeShot(
+button.dataset.shot
+);
+
+}
+);
+
+});
+
+
+
+function takeShot(playerShot) {
+
+
+if (gameFinished)
+return;
+
+
+const choices = [
+"left",
+"centre",
+"right"
+];
+
+
+const goalieChoice =
+choices[
+Math.floor(
+Math.random() *
+choices.length
+)
+];
+
+
+shots++;
+
+
+const result =
+document.getElementById("result");
+
+
+if (
+playerShot === goalieChoice
+) {
+
+result.textContent =
+"SAVED!";
+
+result.className =
+"result save-result";
+
+} else {
+
+goals++;
+
+result.textContent =
+"GOAL! ⚡";
+
+result.className =
+"result goal-result";
+
+}
+
+
+document
+.getElementById("shots")
+.textContent =
+`${shots} / 5`;
+
+
+document
+.getElementById("goals")
+.textContent =
+goals;
+
+
+if (shots === 5) {
+
+gameFinished = true;
+
+setTimeout(
+finishGame,
+500
+);
+
+}
+
+}
+
+
+
+function finishGame() {
+
+
+document
+.getElementById("gameOver")
+.style.display =
+"block";
+
+
+document
+.getElementById("finalResult")
+.innerHTML =
+
+`You scored
+<strong>${goals}</strong>
+out of
+<strong>5</strong>
+penalties.`;
+
+}
+
+
+
+function resetGame() {
+
+
+shots = 0;
+
+goals = 0;
+
+gameFinished = false;
+
+
+document
+.getElementById("shots")
+.textContent =
+"0 / 5";
+
+
+document
+.getElementById("goals")
+.textContent =
+"0";
+
+
+document
+.getElementById("result")
+.textContent =
+"";
+
+
+document
+.getElementById("gameOver")
+.style.display =
+"none";
+
+}
+
+
+
+document
+.getElementById("newGame")
+.addEventListener(
+"click",
+resetGame
+);
+
+
+</script>
+
+
+</body>
+
+</html>
