@@ -58,6 +58,26 @@ td a:hover{color:var(--aqua);text-decoration:underline}
 .fine-print{color:var(--muted);font-size:12px;line-height:1.6;margin-top:28px}
 footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;font-size:13px}
 @media(max-width:700px){header{padding:22px 0}.header-logo{width:90px;height:90px}.page-name{font-size:14px;letter-spacing:3px}.hero{padding:19px 12px}.hero-grid{grid-template-columns:minmax(0,1fr) minmax(90px,130px) minmax(0,1fr);gap:9px}.team-logo{width:80px;height:80px}.team-name{font-size:12px}.score{font-size:clamp(27px,7vw,45px)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.meta{font-size:11px}}
+
+/* Expandable official penalty log */
+.penalty-disclosure{border:1px solid var(--stroke);border-radius:10px;background:linear-gradient(145deg,rgba(9,36,44,.9),rgba(6,22,29,.96));overflow:hidden}
+.penalty-disclosure summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:14px;padding:19px 21px;color:var(--cream);font-size:15px;font-weight:900;letter-spacing:.5px}
+.penalty-disclosure summary::-webkit-details-marker{display:none}
+.penalty-disclosure summary::after{content:'+';font-size:28px;line-height:.7;color:var(--aqua)}
+.penalty-disclosure[open] summary::after{content:'–'}
+.penalty-disclosure summary:hover,.penalty-disclosure summary:focus-visible{background:rgba(36,224,194,.07);color:var(--aqua)}
+.penalty-total-line{color:var(--muted);font-size:12px;font-weight:600;letter-spacing:0}
+.penalty-body{padding:0 20px 21px;border-top:1px solid rgba(255,255,255,.08)}
+.penalty-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:18px}
+.penalty-box{min-width:0}
+.penalty-box h3{font-size:15px;color:var(--cream);font-weight:900;text-transform:uppercase;margin:2px 0 12px}
+.penalty-box h3 span{font-weight:600;color:var(--aqua);font-size:12px;text-transform:none}
+.penalty-box .table-wrap{overflow-x:auto}
+.penalty-box table{min-width:420px;font-size:12px}
+.penalty-box th,.penalty-box td{padding:11px 9px}
+.penalty-box .none{padding:18px 10px;color:var(--muted);font-size:13px}
+.penalty-note{margin:15px 0 0;color:var(--muted);font-size:12px;line-height:1.65}
+@media(max-width:850px){.penalty-grid{grid-template-columns:1fr}.penalty-disclosure summary{flex-wrap:wrap}.penalty-total-line{width:100%}.penalty-box table{min-width:390px}}
 </style>
 </head>
 <body>
@@ -122,6 +142,8 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
       const resultWord=outcome.toUpperCase().startsWith('W')?'won':outcome.toUpperCase().startsWith('L')?'lost':'drew';
       const goalieRows=rows(wb,'Netminder Stats').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase() && cap(r['Player ID']));
       const pRows=rows(wb,'Player Game Stats').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase() && cap(r['Player ID']));
+      const penaltyRows=rows(wb,'Penalties').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase());
+      const penaltyImportReady=rows(wb,'Penalty Import Log').some(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase());
       const byId = new Map(players.map(p=>[cap(p['Player ID']),p]));
       const skaters=pRows.filter(r=>cap(byId.get(cap(r['Player ID']))?.['Position']).toLowerCase()!=='netminder');
       const sorted=skaters.slice().sort((a,b)=>(n(b['Points'])||n(b['Goals'])+n(b['Assists']))-(n(a['Points'])||n(a['Goals'])+n(a['Assists']))||n(b['Goals'])-n(a['Goals'])||cap(a['Player Name']).localeCompare(cap(b['Player Name'])));
@@ -164,7 +186,32 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
         output+='<h2 class="section-heading">Netminder performance</h2><div class="table-wrap"><table><thead><tr><th>Netminder</th><th class="right">Time on ice</th><th class="right">Shots</th><th class="right">Saves</th><th class="right">GA</th><th class="right">Save %</th><th class="right">Decision</th></tr></thead><tbody>'+
         goalieRows.map(r=>{const shots=n(r['Shots Against']),saves=n(r['Saves']);return '<tr><td>'+linkPlayer(r)+'</td><td class="right">'+duration(r['Minutes'])+'</td><td class="right">'+shots+'</td><td class="right">'+saves+'</td><td class="right">'+n(r['Goals Against'])+'</td><td class="right">'+(shots?(100*saves/shots).toFixed(1)+'%':'—')+'</td><td class="right">'+esc(r['Decision']||'—')+'</td></tr>';}).join('')+'</tbody></table></div>';
       }
-      output+='<p class="fine-print">Statistics are shown as currently entered in the MK Thunder master spreadsheet. Player penalty minutes exclude any separate team/bench penalties. Goalscorers are listed by total goals, not in scoring order; goal times and a full event timeline are not stored in this workbook.</p>';
+      // The detailed events are kept separate from the original player-match totals.
+      output+='<h2 class="section-heading">Match penalties</h2>';
+      if(penaltyImportReady){
+        const mkPen=penaltyRows.filter(r=>cap(r['Team']).toLowerCase()==='mk thunder');
+        const oppPen=penaltyRows.filter(r=>cap(r['Team']).toLowerCase()!=='mk thunder');
+        const penaltySort=(a,b)=>n(a['Period'])-n(b['Period']) || (
+           (Number(String(a['Time']).split(':')[0])||0)*60+(Number(String(a['Time']).split(':')[1])||0)
+          )-(
+           (Number(String(b['Time']).split(':')[0])||0)*60+(Number(String(b['Time']).split(':')[1])||0)
+          );
+        const penaltyTable=(items,title) => {
+          const pims=items.reduce((acc,r)=>acc+n(r['PIM']),0);
+          const table=items.length?'<div class="table-wrap"><table><thead><tr><th>Period</th><th>Time</th><th>Player</th><th>Offence</th><th class="right">PIM</th></tr></thead><tbody>'+
+            items.slice().sort(penaltySort).map(r=>{
+               const period=n(r['Period'])===4?'OT':n(r['Period'])===3?'3rd':n(r['Period'])===2?'2nd':'1st';
+               return '<tr><td>'+period+'</td><td>'+esc(r['Time']||'—')+'</td><td>'+esc(r['Player / Bench']||'—')+'</td><td>'+esc(r['Penalty']||'—')+'</td><td class="right">'+n(r['PIM'])+'</td></tr>';
+            }).join('')+'</tbody></table></div>':'<div class="none">No penalties recorded for this team.</div>';
+          return '<section class="penalty-box"><h3>'+esc(title)+' <span>· '+pims+' penalty minutes</span></h3>'+table+'</section>';
+        };
+        const mkPim=mkPen.reduce((a,r)=>a+n(r['PIM']),0);
+        const oppPim=oppPen.reduce((a,r)=>a+n(r['PIM']),0);
+        output+='<details class="penalty-disclosure"><summary><span>View match penalties</span><span class="penalty-total-line">Thunder '+mkPim+' PIM · '+esc(oName)+' '+oppPim+' PIM</span></summary><div class="penalty-body"><div class="penalty-grid">'+penaltyTable(mkPen,'MK Thunder')+penaltyTable(oppPen,oName)+'</div><p class="penalty-note">Times are elapsed game times from the official weekly NIHL statistics PDF. Bench penalties are included when listed. These event records are separate from the player-statistics PIM totals.</p></div></details>';
+      }else{
+        output+='<div class="empty">Detailed penalty-by-penalty records have not yet been imported for this match.</div>';
+      }
+      output+='<p class="fine-print">Statistics are shown as currently entered in the MK Thunder master spreadsheet. Player penalty minutes exclude separate team/bench penalties. Goalscorers are listed by total goals, not in scoring order; goal times and a full event timeline are not stored in this workbook. Official PDF source differences are documented in the Penalty Import Log worksheet.</p>';
       el.innerHTML=output;
     })
     .catch(err=>{console.error('Match Centre error:',err);showError('Could not load match statistics from the Excel workbook.');});
