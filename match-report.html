@@ -108,6 +108,34 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
 .goal-disclaimer{color:var(--muted);font-size:12px;line-height:1.6;margin-top:16px}
 @media(max-width:700px){.goal-disclosure summary{padding:16px 14px;flex-wrap:wrap}.goal-summary-stats{width:100%;text-align:left;margin-left:0}.goal-body{padding:10px 13px 18px}.goal-event{grid-template-columns:60px minmax(0,1fr);gap:9px;padding-left:13px}.goal-scoreline{grid-column:2;font-size:15px}.goal-scorer{font-size:14px}.goal-clock{font-size:12px}}
 
+
+/* Optional match gallery – appears only where numbered photos exist */
+.match-gallery{margin-top:38px}
+.match-gallery[hidden],.photo-lightbox[hidden]{display:none !important}
+.photo-gallery-heading{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:15px}
+.photo-gallery-heading .section-heading{margin:0}
+.photo-gallery-count{font-size:12px;font-weight:800;letter-spacing:.6px;color:var(--cream)}
+.photo-gallery-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.photo-thumb{position:relative;display:block;min-width:0;aspect-ratio:4 / 3;border:1px solid var(--stroke);border-radius:9px;overflow:hidden;cursor:pointer;padding:0;background:#0a2831;color:white}
+.photo-thumb img{display:block;width:100%;height:100%;object-fit:cover;transition:transform .2s ease}
+.photo-thumb:hover img,.photo-thumb:focus-visible img{transform:scale(1.045)}
+.photo-thumb:focus-visible,.gallery-view-all:focus-visible,.photo-lightbox button:focus-visible{outline:3px solid var(--aqua);outline-offset:3px}
+.photo-feature-label{position:absolute;left:8px;bottom:8px;max-width:calc(100% - 16px);border-radius:4px;background:rgba(3,19,24,.88);padding:6px 9px;font-size:11px;font-weight:900;line-height:1.2;color:var(--cream);text-align:left}
+.photo-gallery-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-top:13px}
+.photo-gallery-note{margin:0;color:var(--muted);font-size:12px;line-height:1.5}
+.gallery-view-all{border:1px solid var(--stroke);background:#10404b;color:var(--cream);font-size:13px;font-weight:900;border-radius:6px;cursor:pointer;padding:11px 16px}
+.gallery-view-all:hover{background:#175c66;color:var(--aqua)}
+.photo-lightbox{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:56px 12px 20px;background:rgba(2,10,14,.96)}
+.photo-lightbox-close{position:absolute;top:12px;right:16px;width:42px;height:42px;border:1px solid var(--stroke);background:#153d47;border-radius:50%;font-size:28px;line-height:1;color:#fff;cursor:pointer}
+.photo-lightbox-stage{display:grid;grid-template-columns:42px minmax(0,1fr) 42px;align-items:center;gap:10px;width:min(1100px,100%);height:min(79vh,790px)}
+.photo-lightbox-arrow{width:42px;height:58px;border:1px solid var(--stroke);background:#153d47;color:#fff;border-radius:8px;font-size:32px;cursor:pointer}
+.photo-lightbox-arrow:hover,.photo-lightbox-close:hover{color:var(--aqua);background:#185865}
+.photo-lightbox-figure{margin:0;min-width:0;min-height:0;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.photo-lightbox-image{display:block;max-width:100%;max-height:calc(100% - 40px);width:auto;height:auto;object-fit:contain;border-radius:4px}
+.photo-lightbox-caption{color:var(--cream);text-align:center;font-size:13px;font-weight:800}
+body.photo-gallery-open{overflow:hidden}
+@media(max-width:700px){.photo-gallery-grid{gap:6px}.photo-thumb{aspect-ratio:1 / 1}.photo-feature-label{font-size:9px;left:4px;bottom:4px;padding:4px 5px}.photo-lightbox-stage{grid-template-columns:34px minmax(0,1fr) 34px;gap:3px}.photo-lightbox-arrow{width:34px;height:48px;font-size:25px}.photo-gallery-heading .section-heading{font-size:20px}}
+
 </style>
 </head>
 <body>
@@ -144,6 +172,104 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
   const cap = (s) => String(s||'').trim();
   const badge = s => '<span class="tag">'+esc(s)+'</span>';
   const showError = (message) => {el.innerHTML='<div class="empty">'+esc(message)+' <a href="results.html">Go back to Results</a>.</div>';};
+  // GitHub Pages cannot list folders, so check photos/G001/01.jpg ... 12.jpg.
+  // A game without photos produces no gallery, and no Excel edits are needed.
+  function loadMatchGallery(gameId, opponentName){
+    const section=document.getElementById('match-gallery');
+    if(!section || !/^G\d{3,6}$/i.test(gameId)) return;
+    const folder='photos/'+gameId.toUpperCase()+'/';
+    const possible=Array.from({length:12},(_,i)=>folder+String(i+1).padStart(2,'0')+'.jpg');
+    Promise.all(possible.map(async url=>{
+      try{
+        const response=await fetch(url,{method:'HEAD',cache:'no-store'});
+        const mime=response.headers && response.headers.get('content-type') || '';
+        return response.ok && /^image\//i.test(mime) ? url : null;
+      }catch{return null;}
+    })).then(found=>{
+      const photos=found.filter(Boolean);
+      if(!photos.length) return;
+      const count=photos.length;
+      const photoAlt=index=>'MK Thunder v '+opponentName+', match photo '+(index+1)+' of '+count;
+      const thumbs=photos.slice(0,3).map((src,index)=>
+        '<button type="button" class="photo-thumb" data-photo-index="'+index+'" aria-label="Open match photo '+(index+1)+' of '+count+'">'+
+        '<img src="'+esc(src)+'" loading="lazy" alt="'+esc(photoAlt(index))+'">'+
+        (index===0?'<span class="photo-feature-label">Photo of the Match</span>':'')+
+        '</button>'
+      ).join('');
+      section.innerHTML='<div class="photo-gallery-heading"><h2 class="section-heading">&#128247; Match gallery</h2><span class="photo-gallery-count">'+count+' photo'+(count===1?'':'s')+'</span></div>'+
+        '<div class="photo-gallery-grid">'+thumbs+'</div>'+
+        '<div class="photo-gallery-footer"><p class="photo-gallery-note">Photo 01 is your Photo of the Match. Click a picture to enlarge it.</p>'+
+        (count>3?'<button type="button" class="gallery-view-all">View all '+count+' match photos &rsaquo;</button>':'')+'</div>';
+      section.hidden=false;
+
+      const dialog=document.createElement('div');
+      dialog.className='photo-lightbox';
+      dialog.hidden=true;
+      dialog.setAttribute('role','dialog');
+      dialog.setAttribute('aria-modal','true');
+      dialog.setAttribute('aria-label','Match photo viewer');
+      dialog.innerHTML='<button type="button" class="photo-lightbox-close" aria-label="Close photo viewer">&times;</button>'+
+        '<div class="photo-lightbox-stage">'+
+        '<button type="button" class="photo-lightbox-arrow photo-lightbox-prev" aria-label="Previous photo">&#8249;</button>'+
+        '<figure class="photo-lightbox-figure"><img class="photo-lightbox-image" alt=""><figcaption class="photo-lightbox-caption"></figcaption></figure>'+
+        '<button type="button" class="photo-lightbox-arrow photo-lightbox-next" aria-label="Next photo">&#8250;</button>'+
+        '</div>';
+      document.body.appendChild(dialog);
+      const enlarged=dialog.querySelector('.photo-lightbox-image');
+      const caption=dialog.querySelector('.photo-lightbox-caption');
+      const closeButton=dialog.querySelector('.photo-lightbox-close');
+      const previousButton=dialog.querySelector('.photo-lightbox-prev');
+      const nextButton=dialog.querySelector('.photo-lightbox-next');
+      let current=0, previousFocus=null, touchStartX=null;
+      function show(index){
+        current=(index+count)%count;
+        enlarged.src=photos[current];
+        enlarged.alt=photoAlt(current);
+        caption.textContent='Photo '+(current+1)+' of '+count+(current===0?' · Photo of the Match':'');
+        previousButton.disabled=nextButton.disabled=count===1;
+      }
+      function open(index){
+        previousFocus=document.activeElement;
+        show(index);
+        dialog.hidden=false;
+        document.body.classList.add('photo-gallery-open');
+        closeButton.focus();
+      }
+      function close(){
+        dialog.hidden=true;
+        document.body.classList.remove('photo-gallery-open');
+        enlarged.removeAttribute('src');
+        if(previousFocus && previousFocus.isConnected) previousFocus.focus();
+      }
+      section.querySelectorAll('[data-photo-index]').forEach(button=>{
+        button.addEventListener('click',()=>open(Number(button.dataset.photoIndex)));
+      });
+      section.querySelector('.gallery-view-all')?.addEventListener('click',()=>open(0));
+      closeButton.addEventListener('click',close);
+      previousButton.addEventListener('click',()=>show(current-1));
+      nextButton.addEventListener('click',()=>show(current+1));
+      dialog.addEventListener('click',event=>{if(event.target===dialog)close();});
+      dialog.addEventListener('keydown',event=>{
+        if(event.key==='Escape'){event.preventDefault();close();}
+        if(event.key==='ArrowLeft'){event.preventDefault();show(current-1);}
+        if(event.key==='ArrowRight'){event.preventDefault();show(current+1);}
+        if(event.key==='Tab'){
+          const controls=[closeButton,previousButton,nextButton].filter(node=>!node.disabled);
+          const position=controls.indexOf(document.activeElement);
+          if(event.shiftKey && position<=0){event.preventDefault();controls[controls.length-1].focus();}
+          else if(!event.shiftKey && position===controls.length-1){event.preventDefault();controls[0].focus();}
+        }
+      });
+      dialog.addEventListener('touchstart',event=>{touchStartX=event.changedTouches[0]?.screenX??null;},{passive:true});
+      dialog.addEventListener('touchend',event=>{
+        if(touchStartX==null)return;
+        const dx=(event.changedTouches[0]?.screenX??touchStartX)-touchStartX;
+        if(Math.abs(dx)>50)show(current+(dx<0?1:-1));
+        touchStartX=null;
+      },{passive:true});
+    }).catch(error=>console.warn('Optional match photos unavailable:',error));
+  }
+
   if(!id || !/^G\d{3,6}$/i.test(id)){showError('Choose a match from the Results page to see its report.');return;}
   fetch('MK_Thunder_Stats_Master.xlsx?v='+Date.now(),{cache:'no-store'})
     .then(r => {if(!r.ok)throw new Error('The Excel master could not be loaded');return r.arrayBuffer();})
@@ -196,7 +322,8 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
         '<p class="summary">'+esc(recap)+(cap(game['Venue'])?' &nbsp;·&nbsp; '+esc(game['Venue']):'')+'</p></section>';
       if(!complete){el.innerHTML=output+'<p class="fine-print">This match will appear as a completed report when the result is entered into the master workbook.</p>';return;}
       if(!skaters.length && !goalieRows.length){
-        el.innerHTML=output+'<h2 class="section-heading">Match statistics</h2><div class="empty">The result is available, but player and netminder statistics for this game have not yet been imported into the master workbook. They will appear here automatically after the next stats update.</div>';
+        el.innerHTML=output+'<h2 class="section-heading">Match statistics</h2><div class="empty">The result is available, but player and netminder statistics for this game have not yet been imported into the master workbook. They will appear here automatically after the next stats update.</div><section id="match-gallery" class="match-gallery" hidden></section>';
+        loadMatchGallery(id,oName);
         return;
       }
       const totalGoals=skaters.reduce((a,r)=>a+n(r['Goals']),0);
@@ -283,8 +410,10 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
       }else{
         output+='<div class="empty">Detailed penalty-by-penalty records have not yet been imported for this match.</div>';
       }
+      output+='<section id="match-gallery" class="match-gallery" hidden></section>';
       output+='<p class="fine-print">Statistics are shown as currently entered in the MK Thunder master spreadsheet. Player penalty minutes exclude separate team/bench penalties. Goalscorers are listed by total goals, not in scoring order; the goal-by-goal timeline is available for imported matches. Official PDF discrepancies are documented in the Goal Import Log and Penalty Import Log worksheets.</p>';
       el.innerHTML=output;
+      loadMatchGallery(id,oName);
     })
     .catch(err=>{console.error('Match Centre error:',err);showError('Could not load match statistics from the Excel workbook.');});
 })();
