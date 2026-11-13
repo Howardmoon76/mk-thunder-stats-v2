@@ -171,6 +171,31 @@ transform: translateY(-4px);
 border-color: #24e0c2;
 }
 
+/* Make the complete player card keyboard accessible and clickable */
+.player-card:link,
+.player-card:visited {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+.player-card:focus-visible {
+  outline: 3px solid #24e0c2;
+  outline-offset: 4px;
+}
+.player-view {
+  margin-top: 12px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+  color: #f5edc9;
+}
+.player-card:hover .player-view,
+.player-card:focus-visible .player-view {
+  color: #24e0c2;
+}
+
 /* PHOTO */
 
 .player-photo-area {
@@ -569,10 +594,15 @@ grid.className =
 positionPlayers.forEach(player => {
 
 const card =
-document.createElement("div");
+document.createElement("a");
 
 card.className =
 "player-card";
+
+// Use the permanent Player ID, not the name or shirt number.
+// This avoids conflicts when two players wear the same number.
+const playerId = String(player["Player ID"] || "").trim();
+card.href = "player.html?id=" + encodeURIComponent(playerId);
 
 
 const name =
@@ -586,6 +616,8 @@ String(player["Photo / URL"]).trim();
 
 const note =
 String(player["Notes"]).trim();
+
+card.setAttribute("aria-label", "View " + name + "'s player profile");
 
 
 /*
@@ -672,6 +704,8 @@ ${note}
 `
 : ""
 }
+
+<div class="player-view">View player profile &rsaquo;</div>
 
 </div>
 

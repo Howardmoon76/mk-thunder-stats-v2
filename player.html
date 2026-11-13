@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Player Profile | MK Thunder Stats Centre</title>
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(35,185,205,0.12), transparent 35%), linear-gradient(180deg,#061116 0%,#0a1f27 45%,#0d2a33 100%);
+}
+.container { width: min(1200px, 92%); margin: 0 auto; }
+header { padding: 36px 20px 30px; border-bottom:1px solid rgba(49,220,198,.25); }
+.header-content { display:flex; justify-content:space-between; align-items:center; gap:25px; }
+.site-title { font-size:clamp(36px,7vw,68px); font-weight:900; font-style:italic; text-transform:uppercase; line-height:1; }
+.page-name { color:#24e0c2; font-size:19px; font-weight:800; letter-spacing:5px; text-transform:uppercase; margin-top:10px; }
+.header-logo { width:150px; height:150px; object-fit:contain; }
+nav { border-bottom:1px solid rgba(255,255,255,.12); }
+.nav-inner { display:flex; overflow-x:auto; }
+nav a { display:block; padding:19px 21px; border-bottom:3px solid transparent; white-space:nowrap; color:#f4ecc8; text-decoration:none; text-transform:uppercase; font-size:13px; font-weight:bold; letter-spacing:1px; }
+nav a:hover, nav a.active { color:#24e0c2; border-bottom-color:#24e0c2; }
+main { padding: 30px 0 65px; }
+a { color:#24e0c2; }
+.back-link { display:inline-flex; align-items:center; gap:9px; text-decoration:none; color:#f5edc9; font-size:14px; font-weight:800; margin-bottom:25px; }
+.back-link:hover { color:#24e0c2; }
+.hero { display:grid; grid-template-columns:minmax(220px, 315px) 1fr; gap:26px; padding:25px; background:linear-gradient(135deg,rgba(13,63,73,.97),rgba(5,22,28,.97)); border:1px solid rgba(80,190,175,.40); border-radius:12px; overflow:hidden; }
+.hero-photo-wrap { position:relative; min-height:320px; border-radius:8px; overflow:hidden; background: radial-gradient(circle at center,rgba(36,224,194,.19),transparent 72%),#06171d; }
+.hero-photo { display:block; width:100%; height:100%; min-height:320px; max-height:420px; object-fit:cover; object-position:top center; }
+.hero-placeholder { position:absolute; inset:0; display:flex; justify-content:center; align-items:center; font-size:75px; font-weight:900; color:#24e0c2; }
+.hero-placeholder[hidden] { display:none; }
+.hero-info { align-self:center; }
+.eyebrow { font-size:13px; font-weight:900; color:#24e0c2; text-transform:uppercase; letter-spacing:2px; }
+.hero-info h1 { margin:12px 0 8px; font-size:clamp(33px,5vw,57px); line-height:1.07; text-transform:uppercase; overflow-wrap:anywhere; }
+.player-meta { display:flex; align-items:center; gap:12px; flex-wrap:wrap; color:#f5edc9; text-transform:uppercase; font-weight:800; }
+.jersey { font-size:34px; line-height:1; font-weight:900; color:#24e0c2; }
+.role { padding:6px 10px; border:1px solid rgba(36,224,194,.4); border-radius:5px; font-size:12px; }
+.season { margin-top:20px; color:#c7d9d9; font-size:14px; }
+.section-heading { margin:35px 0 17px; color:#24e0c2; font-size:21px; text-transform:uppercase; }
+.stat-grid { display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:13px; }
+.stat-card { padding:21px 10px; border:1px solid rgba(80,190,175,.35); background:linear-gradient(180deg,#103c45,#071b22); border-radius:8px; text-align:center; }
+.stat-number { font-size:clamp(21px,3vw,36px); font-weight:900; line-height:1.15; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.stat-label { color:#f5edc9; font-size:12px; font-weight:800; letter-spacing:.6px; text-transform:uppercase; margin-top:8px; }
+.data-frame { overflow-x:auto; border:1px solid rgba(80,190,175,.35); border-radius:8px; }
+table { width:100%; border-collapse:collapse; font-size:14px; min-width:660px; }
+th,td { text-align:left; padding:14px 12px; border-bottom:1px solid rgba(255,255,255,.09); }
+th { color:#f5edc9; background:#0e3944; text-transform:uppercase; font-size:11px; letter-spacing:.7px; white-space:nowrap; }
+tbody tr:hover { background:rgba(36,224,194,.07); }
+tbody tr:last-child td { border-bottom:0; }
+.right { text-align:right; font-variant-numeric:tabular-nums; }
+.muted { color:#d5e3e3; }
+.empty { padding:32px; border:1px solid rgba(80,190,175,.3); color:#f5edc9; border-radius:8px; }
+footer { padding:27px 0; border-top:1px solid rgba(36,224,194,.25); font-size:13px; color:#ddd5b5; }
+@media(max-width:750px) {
+  header { padding:24px 0; }
+  .header-logo { width:92px; height:92px; }
+  .page-name { font-size:14px; letter-spacing:3px; }
+  .hero { grid-template-columns:1fr; gap:20px; padding:15px; }
+  .hero-photo-wrap { width:100%; max-width:350px; min-height:280px; }
+  .hero-photo { min-height:280px; }
+  .stat-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+@media(max-width:420px) { .stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+</style>
+</head>
+<body>
+<header><div class="container header-content">
+  <div><div class="site-title">MK Thunder</div><div class="page-name">Player profile</div></div>
+  <img src="thunder-logo.png" class="header-logo" alt="MK Thunder logo">
+</div></header>
+<nav><div class="container nav-inner">
+  <a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="results.html">Results</a><a class="active" href="players.html">Players</a><a href="stats.html">Stats</a><a href="tables.html">Tables</a><a href="about.html">About</a>
+</div></nav>
+<main><div class="container">
+<a href="players.html" class="back-link">&larr; Back to all players</a>
+<div id="profile-content"><div class="empty">Loading player profile...</div></div>
+</div></main>
+<footer><div class="container">MK Thunder Stats Centre &middot; Independent fan statistics site &middot; 2026/27</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+(() => {
+  const container = document.getElementById('profile-content');
+  const playerId = new URLSearchParams(window.location.search).get('id');
+  const safe = (value) => String(value === null || value === undefined ? '' : value)
+    .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+    .replaceAll('"','&quot;').replaceAll("'",'&#39;');
+  const num = (value) => Number.isFinite(Number(value)) && value !== '' && value != null ? Number(value) : 0;
+  const rows = (workbook, name) => {
+    const sheet = workbook.Sheets[name];
+    if (!sheet) return [];
+    return XLSX.utils.sheet_to_json(sheet,{ range:2, defval:'' }).map(row => {
+      const clean = {};
+      Object.keys(row).forEach(key => clean[String(key).trim()] = row[key]);
+      return clean;
+    });
+  };
+  const validPhoto = (value) => {
+    const src=String(value||'').trim();
+    if (!src || /^(?:javascript|data|vbscript):/i.test(src)) return '';
+    if (/^[a-z][\w+.-]*:/i.test(src) && !/^https?:\/\//i.test(src)) return '';
+    return src;
+  };
+  const formatDate = value => {
+    if (value instanceof Date && !Number.isNaN(value.getTime())) {
+      return value.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+    }
+    if (typeof value === 'number') {
+      const parsed = XLSX.SSF.parse_date_code(value);
+      if (parsed) return new Date(Date.UTC(parsed.y,parsed.m-1,parsed.d))
+        .toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric',timeZone:'UTC'});
+    }
+    return String(value || '');
+  };
+  const sortDate = value => {
+    if (value instanceof Date) return value.getTime();
+    if (typeof value === 'number') return value;
+    return new Date(value).getTime() || 0;
+  };
+  const duration = minutes => {
+    // The master workbook stores netminder minutes numerically (e.g. 59.0667 = 59:04).
+    const seconds = Math.max(0,Math.round(num(minutes)*60));
+    return Math.floor(seconds/60) + ':' + String(seconds%60).padStart(2,'0');
+  };
+  const statCard = (label, value) => `<div class="stat-card"><div class="stat-number">${safe(value)}</div><div class="stat-label">${safe(label)}</div></div>`;
+  const table = (heads, data) => `<div class="data-frame"><table><thead><tr>${heads.map((h,i) => `<th${i>1?' class="right"':''}>${safe(h)}</th>`).join('')}</tr></thead><tbody>${data.join('')}</tbody></table></div>`;
+  const cell=(v,right=false)=>`<td${right?' class="right"':''}>${safe(v)}</td>`;
+  const showError = message => container.innerHTML = `<div class="empty">${safe(message)} <a href="players.html">Return to the players page</a>.</div>`;
+
+  if (!playerId || !/^P[0-9]{3,6}$/i.test(playerId)) {
+    showError('Choose a player from the roster to see their profile.');
+    return;
+  }
+  fetch('MK_Thunder_Stats_Master.xlsx', { cache:'no-cache' })
+    .then(response => { if(!response.ok) throw new Error('Workbook not found'); return response.arrayBuffer(); })
+    .then(buffer => {
+      const wb = XLSX.read(buffer,{type:'array',cellDates:true});
+      const players=rows(wb,'Players');
+      const player=players.find(p=>String(p['Player ID']).trim()===playerId);
+      if (!player) { showError('That player was not found in the latest Excel workbook.'); return; }
+      const name=String(player['Name']||'Unknown player').trim();
+      const position=String(player['Position']||'').trim();
+      const isGoalie=position.toLowerCase()==='netminder';
+      const jersey=String(player['Number']??'').trim();
+      const photo=validPhoto(player['Photo / URL']);
+      const initials=name.split(/\s+/).map(s=>s[0]||'').join('').substring(0,2).toUpperCase();
+      document.title=name+' | MK Thunder Stats Centre';
+      const photos=photo?`<img class="hero-photo" alt="${safe(name)}" src="${safe(photo)}"><div class="hero-placeholder" hidden>${safe(initials)}</div>`:`<div class="hero-placeholder">${safe(initials)}</div>`;
+      const note=String(player['Notes']||'').trim();
+      const roleNote=/^(captain|alternate captain|assistant captain)$/i.test(note)?`<div class="season">${safe(note)}</div>`:'';
+      const hero=`<section class="hero"><div class="hero-photo-wrap">${photos}</div><div class="hero-info"><div class="eyebrow">2026/27 Squad</div><h1>${safe(name)}</h1><div class="player-meta"><span class="jersey">#${safe(jersey)}</span><span class="role">${safe(position)}</span></div>${roleNote}<p class="season">MK Thunder &middot; 2026/27 Season</p></div></section>`;
+      const gameById = new Map(rows(wb,'Games').map(g=>[String(g['Game ID']).trim(),g]));
+      const teamsById = new Map(rows(wb,'Teams').map(t=>[String(t['Team ID']).trim(),t]));
+      const fixture = gameId => {
+        const g=gameById.get(String(gameId).trim())||{};
+        const t=teamsById.get(String(g['Opponent ID']||'').trim())||{};
+        return {g, opponent:String(t['Short name']||t['Team Name']||'Opponent'),
+          date:formatDate(g['Date']), sort:sortDate(g['Date']),
+          result: (g['Thunder Score']!=='' && g['Opponent Score']!=='')
+           ? `${g['Thunder Score']}–${g['Opponent Score']}${g['OT/SO?'] ? ' ('+g['OT/SO?']+')':''}` : '—',
+          location: String(g['H/A']||'') === 'H' ? '(H)' : String(g['H/A']||'')==='A'?'(A)':'' };
+      };
+      let content='';
+      if (isGoalie) {
+        const entries=rows(wb,'Netminder Stats').filter(r=>String(r['Player ID']).trim()===playerId);
+        const shots=entries.reduce((sum,r)=>sum+num(r['Shots Against']),0);
+        const goals=entries.reduce((sum,r)=>sum+num(r['Goals Against']),0);
+        const saves=entries.reduce((sum,r)=>sum+num(r['Saves']),0);
+        const minutes=entries.reduce((sum,r)=>sum+num(r['Minutes']),0);
+        const shutouts=entries.filter(r=>String(r['Shutout?']||'').trim().toLowerCase()==='yes').length;
+        const percentage=shots>0?(100*saves/shots).toFixed(1)+'%':'—';
+        content=`<h2 class="section-heading">Netminder statistics</h2><div class="stat-grid">${[
+          ['Appearances',entries.length],['Time on ice',duration(minutes)],['Shots against',shots],['Saves',saves],['Save %',percentage],['Goals against',goals],['Shutouts',shutouts]
+        ].map(([a,b])=>statCard(a,b)).join('')}</div>`;
+        const log=entries.map(r=>({...fixture(r['Game ID']), r})).sort((a,b)=>b.sort-a.sort);
+        const trs=log.map(({r,date,opponent,location,result})=>`<tr>${cell(date)}${cell(opponent+' '+location)}${cell(result,true)}${cell(duration(r['Minutes']),true)}${cell(r['Shots Against'],true)}${cell(r['Goals Against'],true)}${cell(r['Saves'],true)}${cell(num(r['Shots Against'])? (100*num(r['Saves'])/num(r['Shots Against'])).toFixed(1)+'%' : '—',true)}${cell(r['Decision']||'—',true)}</tr>`);
+        content+=`<h2 class="section-heading">Game-by-game</h2>${trs.length ? table(['Date','Opponent','Score','TOI','SA','GA','Saves','SV%','Decision'],trs) : '<div class="empty">No netminder appearances recorded yet.</div>'}`;
+      } else {
+        const entries=rows(wb,'Player Game Stats').filter(r=>String(r['Player ID']).trim()===playerId && String(r['Game ID']||'').trim());
+        const dash=rows(wb,'Dashboard').find(r=>String(r['Player ID']).trim()===playerId);
+        // Prefer the same season totals used by the existing website dashboard.
+        // Fall back to match entries for a newly-added player not in Dashboard yet.
+        const played=entries.filter(r=>String(r['Dressed?']).trim().toLowerCase()==='yes').length;
+        const sum=key=>entries.reduce((total,r)=>total+num(r[key]),0);
+        const G=dash?num(dash['G']):sum('Goals');
+        const A=dash?num(dash['A']):sum('Assists');
+        content=`<h2 class="section-heading">Season statistics</h2><div class="stat-grid">${[
+          ['Games played',dash?num(dash['GP']):played],['Goals',G],['Assists',A],['Points',dash?num(dash['PTS']):G+A],['Penalty mins',dash?num(dash['PIM']):sum('PIM')]
+        ].map(([a,b])=>statCard(a,b)).join('')}</div>`;
+        const log=entries.map(r=>({...fixture(r['Game ID']),r})).sort((a,b)=>b.sort-a.sort);
+        const trs=log.map(({r,date,opponent,location,result})=>`<tr>${cell(date)}${cell(opponent+' '+location)}${cell(result,true)}${cell(r['Goals']||0,true)}${cell(r['Assists']||0,true)}${cell(num(r['Goals'])+num(r['Assists']),true)}${cell(r['PIM']||0,true)}</tr>`);
+        content+=`<h2 class="section-heading">Game-by-game</h2>${trs.length ? table(['Date','Opponent','Score','G','A','PTS','PIM'],trs) : '<div class="empty">No match-by-match statistics recorded yet.</div>'}`;
+      }
+      container.innerHTML=hero+content;
+      const img=container.querySelector('.hero-photo');
+      if(img) img.addEventListener('error',()=>{img.style.display='none'; const fallback=container.querySelector('.hero-placeholder'); if(fallback) fallback.hidden=false;});
+    })
+    .catch(error => { console.error('Could not load player profile:',error); showError('Could not load the Excel player statistics.'); });
+})();
+</script>
+</body>
+</html>
