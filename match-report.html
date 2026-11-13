@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Match Report | MK Thunder Stats Centre</title>
+<style>
+*{box-sizing:border-box}
+:root{--aqua:#24e0c2;--cream:#f5edc9;--muted:#c0d3d5;--stroke:rgba(80,190,175,.35)}
+body{margin:0;min-height:100vh;font-family:Arial,Helvetica,sans-serif;color:#fff;background:radial-gradient(circle at top,rgba(35,185,205,.12),transparent 35%),linear-gradient(180deg,#061116 0%,#0a1f27 45%,#0d2a33 100%)}
+.container{width:min(1200px,92%);margin:auto}
+header{padding:38px 20px 32px;border-bottom:1px solid rgba(49,220,198,.25)}
+.header-content{display:flex;justify-content:space-between;align-items:center;gap:24px}
+.site-title{font-size:clamp(38px,7vw,70px);font-weight:900;font-style:italic;text-transform:uppercase;line-height:1.05}
+.page-name{color:var(--aqua);font-size:21px;font-weight:800;letter-spacing:6px;margin-top:8px;text-transform:uppercase}
+.header-logo{height:150px;width:150px;object-fit:contain}
+nav{border-bottom:1px solid rgba(255,255,255,.12)}
+.nav-inner{display:flex;align-items:center;overflow-x:auto}
+nav a{display:block;flex:0 0 auto;padding:19px 22px;color:var(--cream);text-decoration:none;text-transform:uppercase;font-size:13px;font-weight:bold;letter-spacing:1px;white-space:nowrap;border-bottom:3px solid transparent}
+nav a:hover,nav a.active{color:var(--aqua);border-bottom-color:var(--aqua)}
+main{padding:30px 0 65px}
+a{color:var(--aqua)}
+.back{display:inline-flex;align-items:center;gap:7px;margin-bottom:20px;text-decoration:none;color:var(--cream);font-weight:800;font-size:14px}
+.back:hover{color:var(--aqua)}
+.hero{background:linear-gradient(145deg,rgba(15,55,64,.95),rgba(4,17,22,.98));border:1px solid var(--stroke);border-radius:12px;padding:29px 25px 24px}
+.meta{color:var(--aqua);text-align:center;font-size:12px;font-weight:900;letter-spacing:1.5px;text-transform:uppercase;line-height:1.8}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(145px,230px) minmax(0,1fr);align-items:center;gap:20px;margin-top:22px}
+.team{text-align:center;min-width:0}
+.team-logo{display:block;width:min(125px,100%);height:125px;object-fit:contain;margin:0 auto 12px}
+.team-name{font-size:clamp(16px,2.5vw,25px);font-weight:900;text-transform:uppercase;overflow-wrap:anywhere}
+.score{font-size:clamp(35px,7vw,72px);line-height:1;white-space:nowrap;text-align:center;font-weight:900;color:var(--cream);letter-spacing:-2px}
+.final{text-align:center;font-size:12px;letter-spacing:2px;font-weight:900;color:var(--aqua);text-transform:uppercase;margin-bottom:11px}
+.tags{display:flex;justify-content:center;flex-wrap:wrap;gap:10px;margin-top:25px}
+.tag{border:1px solid rgba(36,224,194,.42);color:var(--cream);border-radius:4px;padding:7px 11px;font-size:11px;font-weight:800;letter-spacing:.7px;text-transform:uppercase}
+.summary{padding:18px 0 0;margin:18px 0 0;text-align:center;color:var(--muted);font-size:15px;border-top:1px solid rgba(255,255,255,.09);line-height:1.6}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:13px;margin-top:24px}
+.stat{padding:20px 10px;text-align:center;border:1px solid var(--stroke);background:linear-gradient(180deg,#103c45,#071b22);border-radius:8px}
+.stat-val{font-size:clamp(24px,4vw,37px);font-weight:900;font-variant-numeric:tabular-nums}
+.stat-label{margin-top:6px;color:var(--cream);font-size:11px;font-weight:900;letter-spacing:.5px;text-transform:uppercase}
+.section-heading{font-size:22px;text-transform:uppercase;color:var(--aqua);margin:37px 0 17px}
+.panel{border:1px solid var(--stroke);border-radius:9px;background:linear-gradient(145deg,rgba(9,36,44,.85),rgba(6,22,29,.93));padding:19px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.panel h3{color:var(--cream);margin:2px 0 17px;font-size:15px;text-transform:uppercase;letter-spacing:1px}
+.scoring-row{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:11px 0;border-top:1px solid rgba(255,255,255,.08)}
+.scoring-row a{color:#fff;text-decoration:none;font-weight:800;overflow-wrap:anywhere}
+.scoring-row a:hover{text-decoration:underline;color:var(--aqua)}
+.scoring-row .qty{font-size:20px;color:var(--aqua);font-weight:900;font-variant-numeric:tabular-nums}
+.table-wrap{overflow-x:auto;border:1px solid var(--stroke);border-radius:8px}
+table{width:100%;border-collapse:collapse;min-width:640px;font-size:14px}
+th,td{padding:13px 13px;border-bottom:1px solid rgba(255,255,255,.09);text-align:left}
+th{background:#0e3944;color:var(--cream);font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.8px}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:rgba(36,224,194,.065)}
+td a{font-weight:700;color:white;text-decoration:none}
+td a:hover{color:var(--aqua);text-decoration:underline}
+.right{text-align:right;font-variant-numeric:tabular-nums}
+.empty{padding:25px;color:var(--cream);border:1px solid var(--stroke);border-radius:8px;background:rgba(4,20,26,.65);line-height:1.6}
+.fine-print{color:var(--muted);font-size:12px;line-height:1.6;margin-top:28px}
+footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;font-size:13px}
+@media(max-width:700px){header{padding:22px 0}.header-logo{width:90px;height:90px}.page-name{font-size:14px;letter-spacing:3px}.hero{padding:19px 12px}.hero-grid{grid-template-columns:minmax(0,1fr) minmax(90px,130px) minmax(0,1fr);gap:9px}.team-logo{width:80px;height:80px}.team-name{font-size:12px}.score{font-size:clamp(27px,7vw,45px)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.two-col{grid-template-columns:1fr}.meta{font-size:11px}}
+</style>
+</head>
+<body>
+<header><div class="container header-content"><div><div class="site-title">MK Thunder</div><div class="page-name">Match Centre</div></div><img src="thunder-logo.png" alt="MK Thunder logo" class="header-logo"></div></header>
+<nav><div class="container nav-inner"><a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="results.html" class="active">Results</a><a href="players.html">Players</a><a href="stats.html">Stats</a><a href="tables.html">Tables</a><a href="about.html">About</a></div></nav>
+<main><div class="container"><a class="back" href="results.html">&larr; Back to all results</a><div id="match-content" aria-live="polite"><div class="empty">Loading match report...</div></div></div></main>
+<footer><div class="container">MK Thunder Stats Centre &middot; Independent fan statistics site &middot; 2026/27</div></footer>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+(() => {
+  'use strict';
+  const el = document.getElementById('match-content');
+  const id = new URLSearchParams(window.location.search).get('id');
+  const esc = value => String(value == null ? '' : value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const n = value => value !== '' && value != null && Number.isFinite(Number(value)) ? Number(value) : 0;
+  const rows = (wb, name) => wb.Sheets[name] ? XLSX.utils.sheet_to_json(wb.Sheets[name],{range:2,defval:''}).map(r => {
+    const clean={}; Object.keys(r).forEach(k=>clean[String(k).trim()]=r[k]); return clean;
+  }) : [];
+  const validLogo = v => {
+    const s=String(v||'').trim();
+    return s && !/^(?:javascript|data|vbscript):/i.test(s) && (!/^[a-z][\w+.-]*:/i.test(s) || /^https?:\/\//i.test(s)) ? s : '';
+  };
+  const mkDate = v => {
+    if(v instanceof Date) return v;
+    if(typeof v==='number'){
+      const d=XLSX.SSF.parse_date_code(v); if(d) return new Date(Date.UTC(d.y,d.m-1,d.d));
+    }
+    const s=String(v||'').trim(), m=s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{2,4})$/);
+    if(m){ const months={Jan:0,Feb:1,Mar:2,Apr:3,May:4,Jun:5,Jul:6,Aug:7,Sep:8,Oct:9,Nov:10,Dec:11};
+      const yy=Number(m[3]); return new Date(Date.UTC(yy<100?2000+yy:yy, months[m[2]], Number(m[1]))); }
+    return new Date(s);
+  };
+  const duration = v => { const s=Math.max(0,Math.round(n(v)*60));return Math.floor(s/60)+':'+String(s%60).padStart(2,'0'); };
+  const cap = (s) => String(s||'').trim();
+  const badge = s => '<span class="tag">'+esc(s)+'</span>';
+  const showError = (message) => {el.innerHTML='<div class="empty">'+esc(message)+' <a href="results.html">Go back to Results</a>.</div>';};
+  if(!id || !/^G\d{3,6}$/i.test(id)){showError('Choose a match from the Results page to see its report.');return;}
+  fetch('MK_Thunder_Stats_Master.xlsx?v='+Date.now(),{cache:'no-store'})
+    .then(r => {if(!r.ok)throw new Error('The Excel master could not be loaded');return r.arrayBuffer();})
+    .then(buffer => {
+      const wb=XLSX.read(buffer,{type:'array',cellDates:true});
+      const games=rows(wb,'Games');
+      const teams=rows(wb,'Teams');
+      const players=rows(wb,'Players');
+      const game=games.find(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase());
+      if(!game){showError('That match is not in the current master spreadsheet.');return;}
+      const thunder=teams.find(t=>cap(t['Team ID'])==='T001')||{};
+      const opponent=teams.find(t=>cap(t['Team ID'])===cap(game['Opponent ID']))||{};
+      const home=cap(game['H/A']).toUpperCase()==='H';
+      const ts=game['Thunder Score'], os=game['Opponent Score'];
+      const complete=ts!==''&&ts!=null&&os!==''&&os!=null;
+      const tScore=n(ts),oScore=n(os);
+      const tName='MK Thunder',oName=cap(opponent['Team Name'])||'Opponent';
+      const tLogo=validLogo(thunder['Logo file'])||'thunder-logo.png',oLogo=validLogo(opponent['Logo file']);
+      const left={name:home?tName:oName,logo:home?tLogo:oLogo,score:home?tScore:oScore};
+      const right={name:home?oName:tName,logo:home?oLogo:tLogo,score:home?oScore:tScore};
+      const formatted=mkDate(game['Date']);
+      const date=Number.isNaN(formatted.getTime())?'Date unavailable':formatted.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric',timeZone:'UTC'});
+      const type=cap(game['OT/SO?']).toUpperCase();
+      const ended=type==='SO'?'After shootout':type==='OT'?'After overtime':'Full time';
+      const outcome=cap(game['Result']) || (tScore>oScore?'W':tScore<oScore?'L':'T');
+      const resultWord=outcome.toUpperCase().startsWith('W')?'won':outcome.toUpperCase().startsWith('L')?'lost':'drew';
+      const goalieRows=rows(wb,'Netminder Stats').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase() && cap(r['Player ID']));
+      const pRows=rows(wb,'Player Game Stats').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase() && cap(r['Player ID']));
+      const byId = new Map(players.map(p=>[cap(p['Player ID']),p]));
+      const skaters=pRows.filter(r=>cap(byId.get(cap(r['Player ID']))?.['Position']).toLowerCase()!=='netminder');
+      const sorted=skaters.slice().sort((a,b)=>(n(b['Points'])||n(b['Goals'])+n(b['Assists']))-(n(a['Points'])||n(a['Goals'])+n(a['Assists']))||n(b['Goals'])-n(a['Goals'])||cap(a['Player Name']).localeCompare(cap(b['Player Name'])));
+      const linkPlayer = r => {
+        const pid=cap(r['Player ID']);const player=byId.get(pid)||{};
+        const name=cap(player['Name'])||cap(r['Player Name'])||cap(r['Netminder'])||'Player';
+        return /^P\d{3,6}$/i.test(pid) ? '<a href="player.html?id='+encodeURIComponent(pid)+'">'+esc(name)+'</a>' : esc(name);
+      };
+      const logo = team => team.logo?'<img class="team-logo" src="'+esc(team.logo)+'" alt="'+esc(team.name)+' logo">':'<div class="team-logo"></div>';
+      document.title=(complete ? left.score+'–'+right.score+' | ' : '')+left.name+' v '+right.name+' | MK Thunder Stats Centre';
+      const recap=complete ? 'MK Thunder '+resultWord+' '+tScore+'–'+oScore+' against '+oName+(type==='OT'?' after overtime':type==='SO'?' after a shootout':'')+'.' : 'The result has not been entered for this fixture yet.';
+      let output='<section class="hero"><div class="meta">'+esc(date)+' &nbsp;·&nbsp; '+esc(game['Competition']||'Match')+'</div>'+
+        '<div class="hero-grid"><div class="team">'+logo(left)+'<div class="team-name">'+esc(left.name)+'</div></div>'+
+        '<div><div class="final">'+(complete?ended:'Fixture')+'</div><div class="score">'+(complete?left.score+' – '+right.score:'vs')+'</div></div>'+
+        '<div class="team">'+logo(right)+'<div class="team-name">'+esc(right.name)+'</div></div></div>'+
+        '<div class="tags">'+badge(home?'Home':'Away')+(cap(game['Competition'])?badge(game['Competition']):'')+(complete?badge('Thunder '+(outcome.toUpperCase().startsWith('W')?'win':outcome.toUpperCase().startsWith('L')?'loss':'draw')):'')+'</div>'+
+        '<p class="summary">'+esc(recap)+(cap(game['Venue'])?' &nbsp;·&nbsp; '+esc(game['Venue']):'')+'</p></section>';
+      if(!complete){el.innerHTML=output+'<p class="fine-print">This match will appear as a completed report when the result is entered into the master workbook.</p>';return;}
+      if(!skaters.length && !goalieRows.length){
+        el.innerHTML=output+'<h2 class="section-heading">Match statistics</h2><div class="empty">The result is available, but player and netminder statistics for this game have not yet been imported into the master workbook. They will appear here automatically after the next stats update.</div>';
+        return;
+      }
+      const totalGoals=skaters.reduce((a,r)=>a+n(r['Goals']),0);
+      const totalAssists=skaters.reduce((a,r)=>a+n(r['Assists']),0);
+      const totalPim=skaters.reduce((a,r)=>a+n(r['PIM']),0);
+      const contrib=skaters.filter(r=>n(r['Goals'])+n(r['Assists'])>0).length;
+      output+='<div class="stats">'+[
+        ['Thunder goals recorded',totalGoals],['Assists recorded',totalAssists],['Scoring players',contrib],['Player penalty mins',totalPim]
+      ].map(([label,val])=>'<div class="stat"><div class="stat-val">'+esc(val)+'</div><div class="stat-label">'+esc(label)+'</div></div>').join('')+'</div>';
+      const scorer = skaters.filter(r=>n(r['Goals'])>0).sort((a,b)=>n(b['Goals'])-n(a['Goals']));
+      const assists = skaters.filter(r=>n(r['Assists'])>0).sort((a,b)=>n(b['Assists'])-n(a['Assists']));
+      const playerList=(arr,col) => arr.length?arr.map(r=>'<div class="scoring-row"><span>'+linkPlayer(r)+'</span><span class="qty">'+n(r[col])+'</span></div>').join(''):'<p class="muted">None recorded</p>';
+      if(skaters.length){
+        output+='<h2 class="section-heading">Thunder scoring</h2><div class="two-col"><section class="panel"><h3>Goalscorers</h3>'+playerList(scorer,'Goals')+'</section><section class="panel"><h3>Assist providers</h3>'+playerList(assists,'Assists')+'</section></div>';
+        output+='<h2 class="section-heading">Full Thunder player stats</h2><div class="table-wrap"><table><thead><tr><th>Player</th><th class="right">#</th><th class="right">G</th><th class="right">A</th><th class="right">PTS</th><th class="right">PIM</th></tr></thead><tbody>'+
+        sorted.map(r=>{const p=byId.get(cap(r['Player ID']))||{};
+          return '<tr><td>'+linkPlayer(r)+'</td><td class="right">'+esc(p['Number']??'—')+'</td><td class="right">'+n(r['Goals'])+'</td><td class="right">'+n(r['Assists'])+'</td><td class="right">'+(n(r['Goals'])+n(r['Assists']))+'</td><td class="right">'+n(r['PIM'])+'</td></tr>';}).join('')+'</tbody></table></div>';
+      }
+      if(goalieRows.length){
+        output+='<h2 class="section-heading">Netminder performance</h2><div class="table-wrap"><table><thead><tr><th>Netminder</th><th class="right">Time on ice</th><th class="right">Shots</th><th class="right">Saves</th><th class="right">GA</th><th class="right">Save %</th><th class="right">Decision</th></tr></thead><tbody>'+
+        goalieRows.map(r=>{const shots=n(r['Shots Against']),saves=n(r['Saves']);return '<tr><td>'+linkPlayer(r)+'</td><td class="right">'+duration(r['Minutes'])+'</td><td class="right">'+shots+'</td><td class="right">'+saves+'</td><td class="right">'+n(r['Goals Against'])+'</td><td class="right">'+(shots?(100*saves/shots).toFixed(1)+'%':'—')+'</td><td class="right">'+esc(r['Decision']||'—')+'</td></tr>';}).join('')+'</tbody></table></div>';
+      }
+      output+='<p class="fine-print">Statistics are shown as currently entered in the MK Thunder master spreadsheet. Player penalty minutes exclude any separate team/bench penalties. Goalscorers are listed by total goals, not in scoring order; goal times and a full event timeline are not stored in this workbook.</p>';
+      el.innerHTML=output;
+    })
+    .catch(err=>{console.error('Match Centre error:',err);showError('Could not load match statistics from the Excel workbook.');});
+})();
+</script>
+</body>
+</html>
