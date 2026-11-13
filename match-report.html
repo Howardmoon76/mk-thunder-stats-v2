@@ -78,6 +78,36 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
 .penalty-box .none{padding:18px 10px;color:var(--muted);font-size:13px}
 .penalty-note{margin:15px 0 0;color:var(--muted);font-size:12px;line-height:1.65}
 @media(max-width:850px){.penalty-grid{grid-template-columns:1fr}.penalty-disclosure summary{flex-wrap:wrap}.penalty-total-line{width:100%}.penalty-box table{min-width:390px}}
+
+/* Goal-by-goal match timeline: expandable like the penalty summary */
+.goal-disclosure{border:1px solid var(--stroke);border-radius:10px;background:linear-gradient(145deg,rgba(9,36,44,.92),rgba(6,22,29,.97));overflow:hidden}
+.goal-disclosure summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 21px;color:var(--cream);font-size:15px;font-weight:900}
+.goal-disclosure summary::-webkit-details-marker{display:none}
+.goal-disclosure summary::after{content:'+';color:var(--aqua);font-size:28px;line-height:.7}
+.goal-disclosure[open] summary::after{content:'–'}
+.goal-disclosure summary:hover,.goal-disclosure summary:focus-visible{background:rgba(36,224,194,.075);color:var(--aqua)}
+.goal-summary-stats{margin-left:auto;text-align:right;color:var(--muted);font-size:12px;font-weight:600}
+.goal-body{padding:15px 21px 23px;border-top:1px solid rgba(255,255,255,.09)}
+.goal-period{font-size:12px;font-weight:900;letter-spacing:1.8px;text-transform:uppercase;color:var(--cream);padding:17px 0 9px}
+.goal-events{position:relative}
+.goal-event{display:grid;grid-template-columns:73px minmax(0,1fr) auto;gap:16px;align-items:start;border-left:2px solid rgba(36,224,194,.25);padding:14px 0 16px 17px;margin-left:5px;position:relative;border-bottom:1px solid rgba(255,255,255,.075)}
+.goal-event:last-child{border-bottom:0}
+.goal-event::before{content:'';position:absolute;left:-7px;top:21px;width:11px;height:11px;background:var(--aqua);border-radius:50%;box-shadow:0 0 0 3px #092831}
+.goal-event.opponent::before{background:var(--cream)}
+.goal-clock{font-size:14px;font-weight:900;color:var(--cream);font-variant-numeric:tabular-nums;padding-top:1px}
+.goal-info{min-width:0;overflow-wrap:anywhere}
+.goal-scorer{font-size:15px;font-weight:900}
+.goal-scorer a{color:#fff;text-decoration:none}
+.goal-scorer a:hover{color:var(--aqua);text-decoration:underline}
+.goal-for{margin-top:5px;font-size:12px;font-weight:800;color:var(--aqua)}
+.goal-event.opponent .goal-for{color:var(--cream)}
+.goal-assists,.goal-flag{margin-top:6px;font-size:12px;color:var(--muted);line-height:1.5}
+.goal-flag{color:#e6ce9e}
+.goal-scoreline{font-size:19px;font-weight:900;color:var(--cream);font-variant-numeric:tabular-nums;white-space:nowrap}
+.goal-type{display:inline-block;border-radius:3px;border:1px solid rgba(36,224,194,.32);padding:3px 7px;font-weight:900;font-size:10px;letter-spacing:.6px;color:var(--aqua);text-transform:uppercase;margin-left:5px}
+.goal-disclaimer{color:var(--muted);font-size:12px;line-height:1.6;margin-top:16px}
+@media(max-width:700px){.goal-disclosure summary{padding:16px 14px;flex-wrap:wrap}.goal-summary-stats{width:100%;text-align:left;margin-left:0}.goal-body{padding:10px 13px 18px}.goal-event{grid-template-columns:60px minmax(0,1fr);gap:9px;padding-left:13px}.goal-scoreline{grid-column:2;font-size:15px}.goal-scorer{font-size:14px}.goal-clock{font-size:12px}}
+
 </style>
 </head>
 <body>
@@ -143,6 +173,9 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
       const goalieRows=rows(wb,'Netminder Stats').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase() && cap(r['Player ID']));
       const pRows=rows(wb,'Player Game Stats').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase() && cap(r['Player ID']));
       const penaltyRows=rows(wb,'Penalties').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase());
+      const goalRows=rows(wb,'Goals').filter(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase())
+        .sort((a,b)=>n(a['Sequence'])-n(b['Sequence']));
+      const goalImportReady=rows(wb,'Goal Import Log').some(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase());
       const penaltyImportReady=rows(wb,'Penalty Import Log').some(r=>cap(r['Game ID']).toUpperCase()===id.toUpperCase());
       const byId = new Map(players.map(p=>[cap(p['Player ID']),p]));
       const skaters=pRows.filter(r=>cap(byId.get(cap(r['Player ID']))?.['Position']).toLowerCase()!=='netminder');
@@ -178,6 +211,45 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
       const playerList=(arr,col) => arr.length?arr.map(r=>'<div class="scoring-row"><span>'+linkPlayer(r)+'</span><span class="qty">'+n(r[col])+'</span></div>').join(''):'<p class="muted">None recorded</p>';
       if(skaters.length){
         output+='<h2 class="section-heading">Thunder scoring</h2><div class="two-col"><section class="panel"><h3>Goalscorers</h3>'+playerList(scorer,'Goals')+'</section><section class="panel"><h3>Assist providers</h3>'+playerList(assists,'Assists')+'</section></div>';
+
+        // Official goal events. Preserve the PDF sequence and flag time/period discrepancies.
+        output+='<h2 class="section-heading">Goal-by-goal timeline</h2>';
+        if(goalImportReady && goalRows.length){
+          const goalTags={E:'Even strength',PP:'Power play',SH:'Short-handed',PS:'Penalty shot',SO:'Shootout'};
+          const periods={1:'First period',2:'Second period',3:'Third period',4:'Overtime',5:'Shootout'};
+          const mkG=goalRows.filter(r=>cap(r['Team']).toLowerCase()==='mk thunder' && cap(r['Goal Type'])!=='SO').length;
+          const oppG=goalRows.filter(r=>cap(r['Team']).toLowerCase()!=='mk thunder' && cap(r['Goal Type'])!=='SO').length;
+          const soG=goalRows.filter(r=>cap(r['Goal Type'])==='SO').length;
+          let timeline='',lastPeriod=null;
+          goalRows.forEach(g=>{
+            const period=n(g['Timeline Period'])||n(g['PDF Period'])||1;
+            if(period!==lastPeriod){timeline+='<div class="goal-period">'+esc(periods[period]||'Period '+period)+'</div>';lastPeriod=period;}
+            const isMK=cap(g['Team']).toLowerCase()==='mk thunder';
+            const scorer=cap(g['Goalscorer'])||'Unknown scorer';
+            const pId=cap(g['Player ID']);
+            const scorerLink=isMK && /^P\d{3,6}$/i.test(pId)
+              ? '<a href="player.html?id='+encodeURIComponent(pId)+'">'+esc(scorer)+'</a>':esc(scorer);
+            const asst=[cap(g['Assist 1']),cap(g['Assist 2'])].filter(Boolean);
+            const goalType=cap(g['Goal Type']);
+            const details=asst.length?'Assists: '+asst.join(', '):(goalType==='SO'?'':'Unassisted');
+            const tag=goalType && goalType!=='E'?'<span class="goal-type">'+esc(goalTags[goalType]||goalType)+'</span>':'';
+            timeline+='<div class="goal-event '+(isMK?'thunder':'opponent')+'">'+
+              '<div class="goal-clock">'+esc(g['Time'])+'</div>'+
+              '<div class="goal-info"><div class="goal-scorer">'+scorerLink+tag+'</div>'+
+              '<div class="goal-for">'+esc(isMK?'MK Thunder':oName)+'</div>'+
+              (details?'<div class="goal-assists">'+esc(details)+'</div>':'')+
+              (goalType==='SO'?'<div class="goal-flag">Shootout-deciding attempt; not counted as a player goal.</div>':'')+
+              (cap(g['Notes']) && goalType!=='SO'?'<div class="goal-flag">Source note: '+esc(g['Notes'])+'</div>':'')+
+              '</div><div class="goal-scoreline">'+esc(String(g['Score']||'').replace('-','–'))+'</div></div>';
+          });
+          output+='<details class="goal-disclosure"><summary><span>View goal-by-goal timeline</span><span class="goal-summary-stats">'+
+            mkG+' Thunder goals · '+oppG+' '+esc(oName)+' goals'+(soG?' · Shootout included':'')+
+            '</span></summary><div class="goal-body"><div class="goal-events">'+timeline+'</div>'+
+            '<p class="goal-disclaimer">Scores follow home–away order from the official PDF; times are elapsed match times. If a period and time conflict in the PDF, the time determines the timeline period and the source discrepancy is flagged. A shootout decider is not counted as a player goal.</p></div></details>';
+        }else{
+          output+='<div class="empty">Goal-by-goal details have not been imported for this match yet. Other available match statistics remain visible.</div>';
+        }
+
         output+='<h2 class="section-heading">Full Thunder player stats</h2><div class="table-wrap"><table><thead><tr><th>Player</th><th class="right">#</th><th class="right">G</th><th class="right">A</th><th class="right">PTS</th><th class="right">PIM</th></tr></thead><tbody>'+
         sorted.map(r=>{const p=byId.get(cap(r['Player ID']))||{};
           return '<tr><td>'+linkPlayer(r)+'</td><td class="right">'+esc(p['Number']??'—')+'</td><td class="right">'+n(r['Goals'])+'</td><td class="right">'+n(r['Assists'])+'</td><td class="right">'+(n(r['Goals'])+n(r['Assists']))+'</td><td class="right">'+n(r['PIM'])+'</td></tr>';}).join('')+'</tbody></table></div>';
@@ -211,7 +283,7 @@ footer{border-top:1px solid rgba(36,224,194,.25);padding:28px 0;color:#ddd5b5;fo
       }else{
         output+='<div class="empty">Detailed penalty-by-penalty records have not yet been imported for this match.</div>';
       }
-      output+='<p class="fine-print">Statistics are shown as currently entered in the MK Thunder master spreadsheet. Player penalty minutes exclude separate team/bench penalties. Goalscorers are listed by total goals, not in scoring order; goal times and a full event timeline are not stored in this workbook. Official PDF source differences are documented in the Penalty Import Log worksheet.</p>';
+      output+='<p class="fine-print">Statistics are shown as currently entered in the MK Thunder master spreadsheet. Player penalty minutes exclude separate team/bench penalties. Goalscorers are listed by total goals, not in scoring order; the goal-by-goal timeline is available for imported matches. Official PDF discrepancies are documented in the Goal Import Log and Penalty Import Log worksheets.</p>';
       el.innerHTML=output;
     })
     .catch(err=>{console.error('Match Centre error:',err);showError('Could not load match statistics from the Excel workbook.');});
