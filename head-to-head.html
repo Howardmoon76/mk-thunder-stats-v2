@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#061015">
+  <title>Head-to-Head | MK Thunder Stats Centre</title>
+  <style>
+    :root{--bg:#050b0e;--panel:#0a151a;--panel-light:#0d1d23;--line:#29424a;--teal:#22d3df;--teal-dark:#118d99;--white:#f5f7f8;--muted:#a5b7bd;--green:#32d583;--red:#ff777f;--gold:#f5d581}
+    *{box-sizing:border-box}
+    [hidden]{display:none!important}
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;min-height:100vh;background:radial-gradient(circle at top right,rgba(34,211,223,.09),transparent 30%),linear-gradient(180deg,#061015 0%,#03080b 100%);color:var(--white)}
+    a{color:inherit;text-decoration:none}.container{width:min(1180px,calc(100% - 32px));margin:auto}
+    .top-bar{background:#020608;border-bottom:1px solid #15272d;font-size:12px;letter-spacing:1.5px;text-transform:uppercase}
+    .top-bar-inner{min-height:38px;display:flex;align-items:center;justify-content:space-between;gap:12px}.top-bar span:last-child{color:var(--teal)}
+    .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);background:linear-gradient(90deg,rgba(3,10,13,.98),rgba(5,18,23,.88)),radial-gradient(circle at 80% 20%,rgba(34,211,223,.16),transparent 28%)}
+    .hero::after{content:"";position:absolute;inset:0;opacity:.15;background-image:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:40px 40px;pointer-events:none}
+    .hero-inner{position:relative;z-index:1;padding:46px 0 43px}.eyebrow{font-size:13px;font-weight:800;letter-spacing:4px;color:var(--teal);text-transform:uppercase;margin-bottom:10px}
+    .hero h1{margin:0;font-size:clamp(42px,8vw,78px);line-height:.98;letter-spacing:2px;font-weight:900;font-style:italic;text-transform:uppercase}
+    .hero h2{margin:12px 0 0;color:var(--teal);font-size:clamp(20px,4vw,34px);letter-spacing:7px;text-transform:uppercase}
+    .hero-sub{color:#d3e5e9;font-size:13px;margin-top:19px;line-height:1.5;max-width:600px}
+    .hero-logo{position:absolute;right:30px;top:50%;transform:translateY(-50%);width:min(32vw,310px);height:auto;filter:drop-shadow(0 0 25px rgba(34,211,223,.18))}
+    nav{background:rgba(4,11,14,.97);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+    .nav-inner{display:flex;align-items:center;min-height:62px;overflow-x:auto}
+    .nav-inner a{height:62px;padding:0 21px;display:flex;align-items:center;white-space:nowrap;text-transform:uppercase;font-size:13px;font-weight:bold;letter-spacing:1px;border-bottom:3px solid transparent}
+    .nav-inner a:hover,.nav-inner a.active{color:var(--teal);border-bottom-color:var(--teal)}
+    main{padding:34px 0 68px}.intro{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:14px;margin-bottom:22px}
+    .intro h2{margin:0 0 8px;color:var(--teal);font-size:clamp(23px,4vw,30px);letter-spacing:1px;text-transform:uppercase}
+    .intro p{margin:0;color:var(--muted);font-size:14px;line-height:1.5}.pill{padding:8px 12px;border:1px solid var(--teal-dark);color:#dffcff;background:rgba(34,211,223,.05);font-size:11px;font-weight:bold;text-transform:uppercase;letter-spacing:1px}
+    .panel{border:1px solid var(--line);background:linear-gradient(145deg,rgba(10,25,31,.97),rgba(5,13,17,.98));border-radius:5px;padding:21px}
+    .filters{display:grid;grid-template-columns:minmax(230px,1.3fr) minmax(230px,1.1fr) minmax(140px,.7fr);gap:18px;align-items:end}
+    .field label,.field-title{display:block;margin:0 0 10px;color:var(--muted);text-transform:uppercase;font-size:11px;letter-spacing:1.6px;font-weight:800}
+    select{width:100%;min-height:47px;background:#07171c;color:var(--white);border:1px solid #49636a;border-radius:4px;padding:10px 12px;font:700 15px Arial,Helvetica,sans-serif}
+    select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid var(--teal);outline-offset:3px}
+    .toggle-row{display:flex;gap:7px;flex-wrap:wrap}.toggle{background:#07171c;color:#d4e9ec;border:1px solid #49636a;border-radius:4px;min-height:47px;padding:10px 13px;font-size:12px;font-weight:800;cursor:pointer}
+    .toggle:hover{border-color:var(--teal)}.toggle[aria-pressed="true"]{background:var(--teal);border-color:var(--teal);color:#052125}
+    .competition-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:17px;padding-top:17px;border-top:1px solid var(--line)}
+    .competition-row .field-title{margin:0 7px 0 0}.competition-row .toggle{min-height:35px;padding:8px 12px}
+    .hint{font-size:12px;color:var(--muted);margin-top:14px;line-height:1.6}.hint strong{color:#deeff1}
+    .opponent-banner{margin:26px 0 17px;display:flex;gap:17px;align-items:center;flex-wrap:wrap}
+    .opponent-logo{height:65px;width:65px;object-fit:contain;flex:none;background:#07191f;border:1px solid #294a50;border-radius:6px;padding:5px}
+    .opponent-fallback{display:grid;place-items:center;font-size:25px;font-weight:900;color:var(--teal)}
+    .opponent-banner h3{font-size:clamp(23px,4vw,34px);text-transform:uppercase;margin:0 0 5px;line-height:1.12}
+    .opponent-banner p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}.stat-card{min-height:114px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(15,33,40,.96),rgba(6,14,18,.98));border-radius:5px;padding:17px 18px;position:relative;overflow:hidden}
+    .stat-card::before{content:"";position:absolute;top:0;left:16px;width:33px;height:3px;background:var(--teal)}
+    .stat-number{font-size:clamp(28px,4vw,42px);font-weight:900;line-height:1.1;margin:11px 0 10px;font-variant-numeric:tabular-nums}
+    .stat-label{color:var(--muted);font-size:11px;letter-spacing:1.15px;font-weight:bold;text-transform:uppercase}
+    .good{color:var(--green)}.bad{color:var(--red)}.dim{color:var(--muted)}
+    .sub-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:15px;margin-top:16px}.sub-card{border:1px solid var(--line);padding:20px;background:#07181e;border-radius:5px}
+    .sub-card .label{color:var(--teal);font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px}
+    .sub-card .value{font-size:31px;font-weight:900;margin-bottom:9px}.sub-card .description{font-size:12px;color:var(--muted);line-height:1.45}
+    .winbar{height:9px;border-radius:20px;background:#25444a;overflow:hidden;margin-top:13px}.winbar>div{height:100%;background:linear-gradient(90deg,var(--teal-dark),var(--teal))}
+    .section-header{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:30px 0 14px;flex-wrap:wrap}.section-header h3{font-size:20px;color:var(--teal);text-transform:uppercase;letter-spacing:1px;margin:0}.section-header span{color:var(--muted);font-size:12px}
+    .details-layout{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(260px,.8fr);gap:17px}
+    .table-wrap{overflow-x:auto}.table-wrap table{width:100%;border-collapse:collapse;font-size:13px;min-width:570px}
+    th,td{padding:13px 10px;border-bottom:1px solid #21363d;text-align:left;vertical-align:middle}
+    th{color:var(--muted);font-size:11px;letter-spacing:1px;text-transform:uppercase}
+    tbody tr:hover{background:rgba(34,211,223,.04)}tbody tr:last-child td{border-bottom:none}
+    .date-cell{white-space:nowrap}.competition-cell{white-space:nowrap}.table-score{font-weight:900;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .result-chip{font-weight:900;font-size:10px;letter-spacing:.6px;border:1px solid;border-radius:3px;padding:5px 7px;white-space:nowrap;display:inline-block}
+    .result-chip.w{color:#b4f5ce;border-color:#238f53;background:#123323}.result-chip.l{color:#ffb8bd;border-color:#8d4249;background:#2d171b}
+    .result-chip.otl{color:var(--gold);border-color:#947e41;background:#302915}.small-line{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
+    .report-link{color:var(--teal);font-size:11px;text-decoration:underline;text-underline-offset:3px}
+    .insight-stack{display:grid;gap:14px}.insight{padding:16px;background:#071a20;border:1px solid #294a50;border-radius:4px}
+    .insight .label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:bold;margin-bottom:8px}
+    .insight .value{font-size:17px;font-weight:800;line-height:1.3}.insight .sub{margin-top:6px;color:var(--muted);font-size:12px;line-height:1.4}
+    .recent-form{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}.form-chip{width:35px;height:35px;display:grid;place-items:center;font-weight:900;border-radius:4px;border:1px solid var(--line)}
+    .form-chip.w{background:#133b29;color:var(--green);border-color:#225940}.form-chip.l{background:#381d21;color:var(--red);border-color:#63363d}.form-chip.otl{background:#3a321c;color:var(--gold);border-color:#706036}
+    .empty{padding:28px;border:1px dashed #486168;text-align:center;color:var(--muted);line-height:1.6}.error{color:#ffbfc3}
+    .source-note{font-size:12px;line-height:1.6;color:var(--muted);margin-top:16px}.source-note a{text-decoration:underline;color:var(--teal)}
+    footer{border-top:1px solid var(--line);background:#020608;padding:30px 0;color:var(--muted);font-size:12px}.footer-inner{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}.footer-title{font-weight:bold;color:var(--white);margin-bottom:8px}
+    @media(max-width:950px){.filters{grid-template-columns:1fr 1fr}.filters>.field:first-child{grid-column:1/-1}.details-layout{grid-template-columns:1fr}.stat-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+    @media(max-width:650px){.container{width:min(100% - 20px,1180px)}.top-bar-inner{justify-content:center}.top-bar span:last-child{display:none}.hero-inner{padding:36px 0}.hero-logo{right:-22px;width:155px;opacity:.18}.hero h2{letter-spacing:4px}.filters{grid-template-columns:1fr}.filters>.field:first-child{grid-column:auto}.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.stat-card{min-height:108px;padding:15px}.sub-grid{grid-template-columns:1fr}.panel{padding:14px}.nav-inner a{padding:0 15px}.opponent-banner{gap:12px}.opponent-logo{width:56px;height:56px}}
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important}}
+  </style>
+</head>
+<body>
+<div class="top-bar"><div class="container top-bar-inner"><span>MK Thunder Fan Statistics</span><span>2025/26 – 2026/27 Historical Records</span></div></div>
+<header class="hero"><div class="container hero-inner">
+  <img src="thunder-logo.png" class="hero-logo" alt="MK Thunder logo">
+  <div class="eyebrow">Milton Keynes Thunder</div><h1>MK Thunder</h1><h2>Head-to-Head</h2>
+  <div class="hero-sub">Every meeting. Every score. Explore Thunder's NIHL 2 record against the opposition.</div>
+</div></header>
+<nav aria-label="Main navigation"><div class="container nav-inner">
+  <a href="index.html">Home</a><a href="fixtures.html">Fixtures</a><a href="results.html">Results</a><a href="players.html">Players</a><a href="stats.html">Stats</a><a href="tables.html">Tables</a><a class="active" aria-current="page" href="head-to-head.html">Head-to-Head</a><a href="about.html">About</a>
+</div></nav>
+<main><div class="container">
+  <div class="intro"><div><h2>Head-to-Head Records</h2><p>How have Thunder performed against each team since the 2025/26 season?</p></div><div class="pill" id="coverage">Loading match history…</div></div>
+  <section class="panel" aria-label="Head-to-head filters">
+    <div class="filters">
+      <div class="field"><label for="opponent">Choose opponent</label><select id="opponent" aria-label="Choose an opposing team"><option>Loading opponents…</option></select></div>
+      <div class="field"><span class="field-title">Season</span><div class="toggle-row" id="season-options" role="group" aria-label="Season filter"></div></div>
+      <div class="field"><label for="venue">Venue</label><select id="venue"><option value="all">Home &amp; Away</option><option value="H">Home only</option><option value="A">Away only</option></select></div>
+    </div>
+    <div class="competition-row"><span class="field-title">Competition</span><div class="toggle-row" role="group" aria-label="Competition filter" id="competition-options">
+      <button class="toggle" type="button" data-comp="all" aria-pressed="true">All games</button>
+      <button class="toggle" type="button" data-comp="league" aria-pressed="false">League</button>
+      <button class="toggle" type="button" data-comp="cup" aria-pressed="false">League Cup</button>
+      <button class="toggle" type="button" data-comp="playoffs" aria-pressed="false">Playoffs</button>
+    </div></div>
+    <div class="hint"><strong>How the filters work:</strong> A game marked League/Cup belongs to both competitions, but is counted only once in the overall record. Shootout and overtime results are kept separate from regulation results.</div>
+  </section>
+  <div id="content" aria-live="polite"><div class="empty" style="margin-top:22px">Loading head-to-head records…</div></div>
+  <div class="source-note" id="source-note">Results are based on the supplied historical workbook and the site's current master statistics workbook.</div>
+</div></main>
+<footer><div class="container footer-inner"><div><div class="footer-title">MK THUNDER STATS CENTRE</div>Independent fan statistics site.</div><div><div class="footer-title">HISTORICAL RECORDS</div>Built by a Thunder fan for Thunder fans.</div></div></footer>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+(()=>{
+  'use strict';
+  const el = id=>document.getElementById(id);
+  const esc = value=>String(value == null ? '' : value).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const numeric = value=>Number(value);
+  const validNumber = value=>value!=='' && value!=null && Number.isFinite(Number(value));
+  const logo = value=>/^[a-z0-9_-]+\.(?:png|webp|jpg|jpeg|svg)$/i.test(String(value||'').trim()) ? String(value).trim() : '';
+  const seasonOf = date=>{const y=Number(String(date).slice(0,4)),m=Number(String(date).slice(5,7));return Number.isFinite(y)&&m>=1&&m<=12?(m>=8?`${y}/${String((y+1)%100).padStart(2,'0')}`:`${y-1}/${String(y%100).padStart(2,'0')}`):''};
+  const displayDate = iso=>{const date=new Date(iso+'T12:00:00Z');return isNaN(date.getTime())?iso:date.toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short',year:'numeric'})};
+  const dateFromExcel = value=>{
+    if(value instanceof Date && !isNaN(value.getTime())) return value.toISOString().slice(0,10);
+    if(typeof value==='number' && window.XLSX){const d=XLSX.SSF.parse_date_code(value);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}
+    const s=String(value||'').trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);
+    const d=new Date(s);return isNaN(d.getTime())?'':d.toISOString().slice(0,10);
+  };
+  const sheetRows = (wb,name)=>wb.Sheets[name]?XLSX.utils.sheet_to_json(wb.Sheets[name],{range:2,defval:''}).map(r=>Object.fromEntries(Object.entries(r).map(([k,v])=>[String(k).trim(),v]))):[];
+  const gameKey = r=>[r.season,r.date,r.opponentId,r.location].join('|');
+  const normalizedName = n=>String(n||'').trim().toLowerCase();
+  const keyAliases = {'oxford rising stars':'T010','oxford stars':'T010','bristol pitbulls nihl 2':'T011','bristol pitbulls 2':'T011','peterborough phantoms nihl 2':'T007','peterborough phantoms 2':'T007'};
+  const competition = val=>{
+    const s=String(val||'').trim().toLowerCase();
+    if(s==='l/c'||s.includes('league/cup')||s.includes('league & cup'))return 'L/C';
+    if(s==='l'||s==='league')return 'L';
+    if(s==='c'||s==='cup'||s==='league cup')return 'C';
+    if(s.startsWith('po')||s.includes('playoff'))return 'PO';
+    return '';
+  };
+  let teams={},all=[],season='all',comp='all',venue='all';
+  function statsOf(arr){
+    let w=0,ow=0,ol=0,l=0,gf=0,ga=0;
+    arr.forEach(r=>{gf+=r.thunderScore;ga+=r.opponentScore;const won=r.thunderScore>r.opponentScore;
+      if(won){if(r.decision==='REG')w++;else ow++;}else{if(r.decision==='REG')l++;else ol++;}});
+    return {n:arr.length,w,ow,ol,l,gf,ga,gd:gf-ga,pct:arr.length?Math.round(100*(w+ow)/arr.length):0};
+  }
+  const outcome = r=>r.thunderScore>r.opponentScore?(r.decision==='REG'?'W':r.decision+' W'):(r.decision==='REG'?'L':r.decision+' L');
+  const classOf=r=>r.thunderScore>r.opponentScore?'w':r.decision!=='REG'?'otl':'l';
+  const gamesFor = r=>r.competitionCode==='L/C'?'League / Cup':r.competitionCode==='L'?'League':r.competitionCode==='C'?'League Cup':r.competitionCode==='PO QF'?'Playoffs · QF':r.competitionCode==='PO SF'?'Playoffs · SF':r.competitionCode.startsWith('PO')?'Playoffs':r.competitionCode;
+  const passesComp=r=>comp==='all'||(comp==='league'&&['L','L/C'].includes(r.competitionCode))||(comp==='cup'&&['C','L/C'].includes(r.competitionCode))||(comp==='playoffs'&&r.competitionCode.startsWith('PO'));
+  const htmlStat=(label,value,cls='')=>`<div class="stat-card"><div class="stat-number ${cls}">${esc(value)}</div><div class="stat-label">${esc(label)}</div></div>`;
+  const countBar=s=>`<div class="winbar" role="img" aria-label="${s.pct}% of games won"><div style="width:${s.pct}%"></div></div>`;
+  const siteLogo=tid=>{const t=teams[tid]||{},src=logo(t.logo);return src?`<img class="opponent-logo" src="${esc(src)}" alt="${esc(t.name||'Opponent')} crest" onerror="this.hidden=true;this.nextElementSibling.hidden=false"><span class="opponent-logo opponent-fallback" hidden>${esc((t.short||t.name||'?').slice(0,2).toUpperCase())}</span>`:`<span class="opponent-logo opponent-fallback">${esc((t.short||t.name||'?').slice(0,2).toUpperCase())}</span>`};
+  const recordsSorted=arr=>[...arr].sort((a,b)=>b.date.localeCompare(a.date)||b.opponentId.localeCompare(a.opponentId));
+  const recordString=s=>`${s.w} reg W · ${s.ow} OT/SO W · ${s.ol} OT/SO L · ${s.l} reg L`;
+  function biggestWin(arr){const won=arr.filter(r=>r.thunderScore>r.opponentScore).sort((a,b)=>(b.thunderScore-b.opponentScore)-(a.thunderScore-a.opponentScore)||b.thunderScore-a.thunderScore||b.date.localeCompare(a.date));return won[0]||null;}
+  function updateURL(){if(!window.history||!window.history.replaceState)return;const params=new URLSearchParams();params.set('opponent',el('opponent').value);if(season!=='all')params.set('season',season);if(comp!=='all')params.set('competition',comp);if(venue!=='all')params.set('venue',venue);try{history.replaceState(null,'',location.pathname+'?'+params.toString());}catch(_){}}
+  function render(){
+    const opponentId=el('opponent').value,t=teams[opponentId]||{name:'Opponent'};
+    const r=recordsSorted(all.filter(g=>g.opponentId===opponentId&&(season==='all'||g.season===season)&&(venue==='all'||g.location===venue)&&passesComp(g)));
+    const s=statsOf(r),home=statsOf(r.filter(g=>g.location==='H')),away=statsOf(r.filter(g=>g.location==='A'));
+    const alias=opponentId==='T010'?'Previously Oxford Rising Stars in 2025/26. Earlier meetings are grouped under Oxford Stars.':'';
+    const first=r[0],best=biggestWin(r),high=[...r].sort((a,b)=>(b.thunderScore+b.opponentScore)-(a.thunderScore+a.opponentScore))[0];
+    const banner=`<div class="opponent-banner">${siteLogo(opponentId)}<div><h3>MK Thunder vs ${esc(t.name)}</h3><p>${r.length} match${r.length===1?'':'es'} in this selection${alias?' · '+esc(alias):''}</p></div></div>`;
+    const primary=`<div class="stat-grid">${[
+      ['Meetings',s.n],['Regulation wins',s.w],['OT / SO wins',s.ow],['OT / SO losses',s.ol],
+      ['Regulation losses',s.l],['Goals for',s.gf],['Goals against',s.ga],['Goal difference',(s.gd>0?'+':'')+s.gd]
+    ].map(([k,v])=>htmlStat(k,v,k==='Goal difference'?(s.gd>0?'good':s.gd<0?'bad':''):'' )).join('')}</div>`;
+    const sub=`<div class="sub-grid">
+      <div class="sub-card"><div class="label">Home record</div><div class="value">${home.w+home.ow}W – ${home.l+home.ol}L</div><div class="description">${home.n} games · ${recordString(home)}</div></div>
+      <div class="sub-card"><div class="label">Away record</div><div class="value">${away.w+away.ow}W – ${away.l+away.ol}L</div><div class="description">${away.n} games · ${recordString(away)}</div></div>
+      <div class="sub-card"><div class="label">Win percentage</div><div class="value">${s.n?s.pct+'%':'—'}</div><div class="description">Wins include regulation, overtime and shootouts</div>${countBar(s)}</div>
+    </div>`;
+    const trs=r.map(g=>{
+      const histName=g.opponentAtTime&&normalizedName(g.opponentAtTime)!==normalizedName(t.name)?`<div class="small-line">Played as ${esc(g.opponentAtTime)}</div>`:'';
+      const note=g.note?`<div class="small-line">${esc(g.note)}</div>`:'';
+      const report=g.gameId?`<div class="small-line"><a class="report-link" href="match-report.html?id=${encodeURIComponent(g.gameId)}">Match report</a></div>`:'';
+      return `<tr><td class="date-cell">${esc(displayDate(g.date))}<div class="small-line">${esc(g.season)}</div></td><td class="competition-cell">${esc(gamesFor(g))}${histName}</td><td>${g.location==='H'?'Home':'Away'}</td><td><span class="table-score">${g.thunderScore}–${g.opponentScore}</span>${note}${report}</td><td><span class="result-chip ${classOf(g)}">${esc(outcome(g))}</span></td></tr>`;
+    }).join('');
+    const meetings=r.length?`<div class="table-wrap"><table><thead><tr><th>Date</th><th>Competition</th><th>Venue</th><th>MK score</th><th>Result</th></tr></thead><tbody>${trs}</tbody></table></div>`:`<div class="empty">No meetings match these filters. Try another season or competition.</div>`;
+    const insight=(label,value,detail='')=>`<div class="insight"><div class="label">${esc(label)}</div><div class="value">${esc(value)}</div>${detail?`<div class="sub">${esc(detail)}</div>`:''}</div>`;
+    const form=r.slice(0,5).reverse().map(g=>`<span class="form-chip ${classOf(g)}" title="${esc(displayDate(g.date)+' · '+g.thunderScore+'–'+g.opponentScore+' · '+outcome(g))}" aria-label="${esc(outcome(g))}">${g.thunderScore>g.opponentScore?'W':'L'}</span>`).join('');
+    const notes=`<div class="insight-stack">
+      ${insight('Most recent meeting',first?first.thunderScore+'–'+first.opponentScore+' ('+outcome(first)+')':'—',first?displayDate(first.date)+' · '+(first.location==='H'?'Home':'Away'):'No matches in selection')}
+      ${insight('Biggest Thunder win',best?best.thunderScore+'–'+best.opponentScore:'—',best?displayDate(best.date)+' · '+(best.location==='H'?'Home':'Away'):'No wins in this selection')}
+      ${insight('Highest-scoring game',high?String(high.thunderScore+high.opponentScore)+' total goals':'—',high?high.thunderScore+'–'+high.opponentScore+' · '+displayDate(high.date):'No matches in selection')}
+      <div class="insight"><div class="label">Last five results</div><div class="value">${r.length?'Oldest → newest':'—'}</div><div class="recent-form" aria-label="Recent form">${form}</div></div>
+    </div>`;
+    el('content').innerHTML=banner+primary+sub+`<div class="section-header"><h3>Previous meetings</h3><span>${s.n} result${s.n===1?'':'s'} · Most recent first</span></div><div class="details-layout"><section class="panel" aria-label="Previous meetings">${meetings}</section><aside class="panel" aria-label="Quick notes"><div class="section-header" style="margin:0 0 16px"><h3>Quick notes</h3></div>${notes}</aside></div>`;
+    updateURL();
+  }
+  async function init(){
+    let archive;
+    try{const res=await fetch('head-to-head-results.json',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);archive=await res.json();if(!Array.isArray(archive.records))throw Error('Invalid records');}
+    catch(err){el('content').innerHTML='<div class="empty error">Could not load head-to-head-results.json. Upload that file alongside head-to-head.html in the same GitHub folder.</div>';el('coverage').textContent='Results unavailable';console.error(err);return;}
+    teams={...archive.teams};
+    const combined=new Map(archive.records.map(r=>[gameKey(r),{...r,source:'archive'}]));
+    let syncOk=false,more=0;
+    if(window.XLSX){
+      try{
+        const res=await fetch('MK_Thunder_Stats_Master.xlsx',{cache:'no-cache'});
+        if(!res.ok)throw Error('Master workbook not available');
+        const wb=XLSX.read(await res.arrayBuffer(),{type:'array',cellDates:true});
+        const mapped=sheetRows(wb,'Teams');const byName={...keyAliases};
+        mapped.forEach(t=>{const id=String(t['Team ID']||'').trim(),name=String(t['Team Name']||'').trim();
+          if(id){teams[id]={...(teams[id]||{}),name,short:String(t['Short name']||'').trim(),logo:String(t['Logo file']||'').trim()};byName[normalizedName(name)]=id;}
+        });
+        sheetRows(wb,'Games').forEach(g=>{
+          const rawcomp=String(g['Competition']||'').trim();if(/pre[\s-]?season|friendly|exhibition/i.test(rawcomp))return;
+          if(!validNumber(g['Thunder Score'])||!validNumber(g['Opponent Score']))return;
+          if(!['W','L','T'].includes(String(g['Result']||'').trim().toUpperCase()))return;
+          const tid=String(g['Opponent ID']||'').trim()||byName[normalizedName(g['Opponent'])];
+          if(!tid)return;
+          const date=dateFromExcel(g['Date']);if(!date)return;
+          const side=String(g['H/A']||'').trim().toUpperCase();if(!['H','A'].includes(side))return;
+          const code=competition(rawcomp);if(!code)return;
+          const goals=numeric(g['Thunder Score']),against=numeric(g['Opponent Score']);if(goals===against)return;
+          const ot=String(g['OT/SO?']||'').trim().toUpperCase();const decision=['OT','SO'].includes(ot)?ot:'REG';
+          const record={season:seasonOf(date),date,opponentId:tid,opponentAtTime:teams[tid]?.name||'',location:side,thunderScore:goals,opponentScore:against,decision,competitionCode:code,source:'master',gameId:String(g['Game ID']||'').trim()};
+          const key=gameKey(record),previous=combined.get(key);if(previous&&previous.note)record.note=previous.note;
+          if(!previous)more++;
+          combined.set(key,record);
+        });
+        syncOk=true;
+      }catch(err){console.warn('Master workbook could not be synced; using the uploaded results archive.',err);}
+    }
+    all=[...combined.values()];
+    const ids=[...new Set(all.map(x=>x.opponentId))].filter(Boolean).sort((a,b)=>(teams[a]?.name||a).localeCompare(teams[b]?.name||b));
+    el('opponent').innerHTML=ids.map(id=>`<option value="${esc(id)}">${esc(teams[id]?.name||id)}</option>`).join('');
+    const params=new URLSearchParams(location.search);const requested=params.get('opponent');el('opponent').value=ids.includes(requested)?requested:(ids.includes('T006')?'T006':ids[0]||'');
+    const seasons=[...new Set(all.map(g=>g.season))].filter(Boolean).sort();
+    season=seasons.includes(params.get('season'))?params.get('season'):'all';
+    el('season-options').innerHTML=['all',...seasons].map(s=>`<button type="button" class="toggle" data-season="${esc(s)}" aria-pressed="${s===season}">${s==='all'?'All seasons':esc(s)}</button>`).join('');
+    comp=['league','cup','playoffs'].includes(params.get('competition'))?params.get('competition'):'all';
+    el('competition-options').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.comp===comp)));
+    venue=['H','A'].includes(params.get('venue'))?params.get('venue'):'all';el('venue').value=venue;
+    const last=[...all].sort((a,b)=>b.date.localeCompare(a.date))[0];
+    el('coverage').textContent=`${all.length} recorded matches · ${seasons.length} seasons`;
+    el('source-note').textContent=`Source: user-supplied 2025/26 and 2026/27 results (${archive.throughDate?displayDate(archive.throughDate):'historical archive'}). ${syncOk?'Also synced with the current master workbook'+(more?' ('+more+' additional game'+(more===1?'':'s')+')':'')+'.':'Live master workbook unavailable; archived results are still displayed.'} League/Cup fixtures count once in the overall total. The abandoned 5 April 2026 Guildford playoff match is included because the 1–4 result stood.`;
+    el('opponent').addEventListener('change',render);
+    el('venue').addEventListener('change',()=>{venue=el('venue').value;render()});
+    el('season-options').addEventListener('click',e=>{const btn=e.target.closest('button[data-season]');if(!btn)return;season=btn.dataset.season;el('season-options').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));render()});
+    el('competition-options').addEventListener('click',e=>{const btn=e.target.closest('button[data-comp]');if(!btn)return;comp=btn.dataset.comp;el('competition-options').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed',String(b===btn)));render()});
+    render();
+  }
+  init();
+})();
+</script>
+</body>
+</html>
