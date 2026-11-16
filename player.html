@@ -64,6 +64,29 @@ footer { padding:27px 0; border-top:1px solid rgba(36,224,194,.25); font-size:13
   .stat-grid { grid-template-columns:repeat(3,minmax(0,1fr)); }
 }
 @media(max-width:420px) { .stat-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } }
+
+/* Player form tracker — reads existing match-by-match rows, no extra workbook fields. */
+.form-panel { margin-top:17px; padding:24px; border:1px solid rgba(80,190,175,.4); border-radius:12px; background:linear-gradient(145deg,#0d303b,#071d25); }
+.form-intro { display:flex; align-items:flex-start; justify-content:space-between; gap:15px; flex-wrap:wrap; }
+.form-intro h3 { margin:0; color:#f5edc9; font-size:18px; }
+.form-intro p { margin:7px 0 0; font-size:13px; color:#c7d9d9; }
+.form-stats { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:12px; margin:20px 0 24px; }
+.form-kpi { background:rgba(5,20,27,.67); border:1px solid rgba(80,190,175,.28); padding:15px 11px; border-radius:8px; text-align:center; }
+.form-number { font-size:clamp(25px,3vw,33px); color:#24e0c2; font-weight:900; font-variant-numeric:tabular-nums; line-height:1.15; }
+.form-kpi-label { color:#f5edc9; font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:.5px; margin-top:7px; }
+.form-kpi-note { color:#a9c5c8; font-size:11px; margin-top:6px; }
+.form-chart-title { color:#f5edc9; font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:.8px; }
+.form-chart { display:grid; grid-template-columns:repeat(var(--form-columns),minmax(0,1fr)); gap:clamp(7px,2.5vw,20px); margin-top:17px; }
+.form-game { min-width:0; text-align:center; }
+.form-bar-area { display:flex; flex-direction:column; align-items:center; justify-content:flex-end; height:155px; border-bottom:1px solid rgba(255,255,255,.20); }
+.form-points { color:#fff; font-weight:900; font-size:18px; line-height:1.4; font-variant-numeric:tabular-nums; }
+.form-bar { display:block; width:min(68px,75%); height:var(--form-bar-height); min-height:4px; border-radius:7px 7px 0 0; background:linear-gradient(180deg,#38f8d3,#158c9a); box-shadow:0 0 20px rgba(36,224,194,.12); }
+.form-bar.zero { background:#45636a; box-shadow:none; }
+.form-game-opponent { color:#fff; font-size:12px; line-height:1.3; font-weight:800; margin-top:10px; overflow-wrap:anywhere; }
+.form-game-date { color:#a9c5c8; font-size:11px; margin-top:5px; }
+.form-game-breakdown { color:#24e0c2; font-size:11px; margin-top:5px; font-weight:700; }
+.form-footnote { color:#a9c5c8; font-size:12px; line-height:1.5; margin:18px 0 0; }
+@media(max-width:650px) { .form-panel { padding:16px 12px; } .form-stats { grid-template-columns:repeat(2,minmax(0,1fr)); } .form-chart { gap:6px; } .form-bar-area { height:125px; } .form-points {font-size:16px;} .form-game-opponent {font-size:10px;} .form-game-date, .form-game-breakdown {font-size:10px;} }
 </style>
 </head>
 <body>
@@ -127,6 +150,57 @@ footer { padding:27px 0; border-top:1px solid rgba(36,224,194,.25); font-size:13
   const statCard = (label, value) => `<div class="stat-card"><div class="stat-number">${safe(value)}</div><div class="stat-label">${safe(label)}</div></div>`;
   const table = (heads, data) => `<div class="data-frame"><table><thead><tr>${heads.map((h,i) => `<th${i>1?' class="right"':''}>${safe(h)}</th>`).join('')}</tr></thead><tbody>${data.join('')}</tbody></table></div>`;
   const cell=(v,right=false)=>`<td${right?' class="right"':''}>${safe(v)}</td>`;
+
+  // Calculate form only from completed matches in which the skater dressed.
+  // The log is already in newest-first order; a point streak can extend past five games.
+  const renderSkaterForm = log => {
+    const appearances=log.filter(({r,g}) =>
+      String(r['Dressed?']||'').trim().toLowerCase()==='yes' &&
+      g && g['Thunder Score']!=='' && g['Thunder Score']!=null &&
+      g['Opponent Score']!=='' && g['Opponent Score']!=null
+    );
+    if (!appearances.length) {
+      return '<h2 class="section-heading">Player form</h2><div class="empty">Recent form will appear once match appearances have been recorded.</div>';
+    }
+    const recent=appearances.slice(0,5);
+    const total=key=>recent.reduce((sum,{r})=>sum+num(r[key]),0);
+    const goals=total('Goals');
+    const assists=total('Assists');
+    const points=goals+assists;
+    let streak=0;
+    for (const {r} of appearances) {
+      if (num(r['Goals'])+num(r['Assists'])===0) break;
+      streak++;
+    }
+    const kpi=(value,label,note)=>`<div class="form-kpi"><div class="form-number">${safe(value)}</div><div class="form-kpi-label">${safe(label)}</div><div class="form-kpi-note">${safe(note)}</div></div>`;
+    const order=recent.slice().reverse(); // Chart runs oldest → newest.
+    const maxPoints=Math.max(1,...order.map(({r})=>num(r['Goals'])+num(r['Assists'])));
+    const bars=order.map(({r,opponent,location,date})=>{
+      const g=num(r['Goals']), a=num(r['Assists']), p=g+a;
+      const height=p ? Math.round(p/maxPoints*108) : 4;
+      const description=`${date}, ${opponent} ${location}: ${g} goals, ${a} assists, ${p} points`;
+      return `<div class="form-game" title="${safe(description)}">
+        <div class="form-bar-area"><div class="form-points">${safe(p)}</div><div class="form-bar${p?'':' zero'}" style="--form-bar-height:${height}px"></div></div>
+        <div class="form-game-opponent">${safe(opponent)} ${safe(location)}</div>
+        <div class="form-game-date">${safe(date)}</div>
+        <div class="form-game-breakdown">${g}G · ${a}A</div>
+      </div>`;
+    }).join('');
+    return `<h2 class="section-heading">🔥 Player form</h2>
+      <section class="form-panel" aria-label="Recent player form">
+        <div class="form-intro"><div><h3>Last ${recent.length} ${recent.length===1?'appearance':'appearances'}</h3>
+          <p>Form calculated automatically from the latest recorded games.</p></div></div>
+        <div class="form-stats">
+          ${kpi(goals,'Goals','Last '+recent.length+' games')}
+          ${kpi(assists,'Assists','Last '+recent.length+' games')}
+          ${kpi(points,'Points',(points/recent.length).toFixed(2)+' per game')}
+          ${kpi(streak,'Point streak',streak===1?'1 game with a point':streak+' consecutive games')}
+        </div>
+        <div class="form-chart-title">Points by appearance · oldest to newest</div>
+        <div class="form-chart" style="--form-columns:${order.length}" role="img" aria-label="${safe('Points in recent games: '+order.map(({r,opponent})=>opponent+' '+(num(r['Goals'])+num(r['Assists']))).join(', '))}">${bars}</div>
+        <p class="form-footnote">Only games where the player was dressed and a final score is recorded are included. The point streak counts consecutive appearances with at least one goal or assist, including games before the last five.</p>
+      </section>`;
+  };
   const showError = message => container.innerHTML = `<div class="empty">${safe(message)} <a href="players.html">Return to the players page</a>.</div>`;
 
   if (!playerId || !/^P[0-9]{3,6}$/i.test(playerId)) {
@@ -192,6 +266,7 @@ footer { padding:27px 0; border-top:1px solid rgba(36,224,194,.25); font-size:13
         const log=entries.map(r=>({...fixture(r['Game ID']),r})).sort((a,b)=>b.sort-a.sort);
         const trs=log.map(({r,date,opponent,location,result})=>`<tr>${cell(date)}${cell(opponent+' '+location)}${cell(result,true)}${cell(r['Goals']||0,true)}${cell(r['Assists']||0,true)}${cell(num(r['Goals'])+num(r['Assists']),true)}${cell(r['PIM']||0,true)}</tr>`);
         content+=`<h2 class="section-heading">Game-by-game</h2>${trs.length ? table(['Date','Opponent','Score','G','A','PTS','PIM'],trs) : '<div class="empty">No match-by-match statistics recorded yet.</div>'}`;
+        content+=renderSkaterForm(log);
       }
       container.innerHTML=hero+content;
       const img=container.querySelector('.hero-photo');
