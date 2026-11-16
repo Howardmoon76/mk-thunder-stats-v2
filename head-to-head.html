@@ -117,7 +117,7 @@
   const seasonOf = date=>{const y=Number(String(date).slice(0,4)),m=Number(String(date).slice(5,7));return Number.isFinite(y)&&m>=1&&m<=12?(m>=8?`${y}/${String((y+1)%100).padStart(2,'0')}`:`${y-1}/${String(y%100).padStart(2,'0')}`):''};
   const displayDate = iso=>{const date=new Date(iso+'T12:00:00Z');return isNaN(date.getTime())?iso:date.toLocaleDateString('en-GB',{timeZone:'UTC',day:'numeric',month:'short',year:'numeric'})};
   const dateFromExcel = value=>{
-    if(value instanceof Date && !isNaN(value.getTime())) return value.toISOString().slice(0,10);
+    if(value instanceof Date && !isNaN(value.getTime())) return `${value.getFullYear()}-${String(value.getMonth()+1).padStart(2,'0')}-${String(value.getDate()).padStart(2,'0')}`;
     if(typeof value==='number' && window.XLSX){const d=XLSX.SSF.parse_date_code(value);if(d)return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;}
     const s=String(value||'').trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);
     const d=new Date(s);return isNaN(d.getTime())?'':d.toISOString().slice(0,10);
@@ -197,7 +197,8 @@
       try{
         const res=await fetch('MK_Thunder_Stats_Master.xlsx',{cache:'no-cache'});
         if(!res.ok)throw Error('Master workbook not available');
-        const wb=XLSX.read(await res.arrayBuffer(),{type:'array',cellDates:true});
+        // Keep Excel dates as serial numbers to avoid British Summer Time shifting midnight back one day.
+        const wb=XLSX.read(await res.arrayBuffer(),{type:'array',cellDates:false});
         const mapped=sheetRows(wb,'Teams');const byName={...keyAliases};
         mapped.forEach(t=>{const id=String(t['Team ID']||'').trim(),name=String(t['Team Name']||'').trim();
           if(id){teams[id]={...(teams[id]||{}),name,short:String(t['Short name']||'').trim(),logo:String(t['Logo file']||'').trim()};byName[normalizedName(name)]=id;}
